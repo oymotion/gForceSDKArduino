@@ -7,27 +7,25 @@
 ////marcos gforce data format
 enum
 {
-    MAGNUM_LOW_INDEX,  // 0xFF
-    MAGNUM_HIGH_INDEX, // 0xAA
+    MAGNUM_LOW_INDEX,  // magic number low byte
+    MAGNUM_HIGH_INDEX, // magic number high byte
     EVENT_TYPE_INDEX,  // event type
     MSG_LEN_INDEX,     // avaliable data length
-    GFORCE_HEADER_LEN
+    GFORCE_HEADER_LEN  // size of the above in bytes
 };
 
 // Magic number
 #define MAGNUM_LOW      0xFF
 #define MAGNUM_HIGH     0xAA
 
-//max byte of receive message
-#define MSG_MAX_SIZE 50
+// Max bytes of receive message
+//#define MSG_MAX_SIZE 50
 
-//msg type definde
-//#define GFORCE_GESTURE      0x0F
-//#define GFORCE_QUATERNION   0x02
+// Message types
 typedef enum 
 {
-    GFORCE_QUATERNION = 0x02,
-    GFORCE_GESTURE = 0x0F,
+    GFORCE_QUATERNION   = 0x02,
+    GFORCE_GESTURE      = 0x0F,
     GFORCE_UNKNOWN // have none available data
 } GforceMsg_t;
 
@@ -91,12 +89,13 @@ class GForceAdapter
   public:
     GForceAdapter();
     bool UpdateData(void);
-    GforceMsg_t GetMsgType(void);
-    bool ConvertQuatToEuler(Quaternion_t *quat, Euler_t *euler);
+    GForceMsg_t GetMsgType(void);
+    bool QuaternionToEuler(Quaternion_t *quat, Euler_t *euler);
     bool Avaliable(void);
     bool GetAvaliableData(GforceData_t *gForcepkg);
 
   private:
+    static const MSG_MAX_SIZE = 50;
     bool GetQuaternion(Quaternion_t *quat);
     bool GetGesture(Gesture_t *gesture);
     unsigned char mGforceData[MSG_MAX_SIZE];
