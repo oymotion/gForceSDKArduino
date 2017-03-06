@@ -2,105 +2,111 @@
 #define GFORCEADAPTER_H
 
 #include <Arduino.h>
+
 ////////////////////////////////////////////////////
-////marco define about gforce data protocol
-#define MAGNUM_LOW_INDEX      0       // 0xFF
-#define MAGNUM_HIGH_INDEX     1       // 0xAA
-#define EVENTTYP_INDEX        2       // event type
-#define MSG_LEN_INDEX         3       // avaliable data length
+////marcos gforce data format
+enum
+{
+    MAGNUM_LOW_INDEX,  // 0xFF
+    MAGNUM_HIGH_INDEX, // 0xAA
+    EVENT_TYPE_INDEX,  // event type
+    MSG_LEN_INDEX,     // avaliable data length
+    GFORCE_HEADER_LEN
+};
 
+// Magic number
+#define MAGNUM_LOW      0xFF
+#define MAGNUM_HIGH     0xAA
 
-#define MAGNUM_LOW           0xFF
-#define MAGNUM_HIGH          0xAA
-
-#define GFORCE_HEADER_LEN     0x04
 //max byte of receive message
-#define MSG_MAX_SIZE          50
+#define MSG_MAX_SIZE 50
 
 //msg type definde
-#define GFORCE_GESTURE        0x0F
-#define GFORCE_QUATERNION     0x02
+//#define GFORCE_GESTURE      0x0F
+//#define GFORCE_QUATERNION   0x02
+typedef enum 
+{
+    GFORCE_QUATERNION = 0x02,
+    GFORCE_GESTURE = 0x0F,
+    GFORCE_UNKNOWN // have none available data
+} GforceMsg_t;
+
 
 /**
  * @brief if use Arduino Mega,change the GforceSerial define to com number which you select
  */
-#define GforceSerial          Serial
+#define GforceSerial Serial
 
 /////////////////////////////////////////////////////
 ///////////enum defines
 typedef enum Gesture
 {
-    Release,
-    Fist,
-    Spread,
-    WaveIn,
-    WaveOut,
-    Pinch,
-    Shoot,
-    Unknown,
-}Gesture_t;
-
-typedef enum {
-    Gforce_Quaternion = 0x02,
-    Gforce_gesture = 0x0F,
-    Gforce_Unknown         // have none available data
-} GforceMsg_t;
+    RELEASE,
+    FIST,
+    SPREAD,
+    WAVEIN,
+    WAVEOUT,
+    PINCH,
+    SHOOT,
+    UNKNOWN,
+} Gesture_t;
 
 /**
  * @brief define quaternion struct
  */
-typedef struct Quat
+typedef struct Quaternion
 {
-   float W;
-   float X;
-   float Y;
-   float Z;
-} quaternion_t;
+    float w;
+    float x;
+    float y;
+    float z;
+} Quaternion_t;
 
 /**
  * @brief define euler struct
  */
 typedef struct Euler
 {
-    float Pitch;
-    float Roll;
-    float Yaw;
-} euler_t;
+    float pitch;
+    float roll;
+    float yaw;
+} Euler_t;
 
 /**
  * @breif define avaliable gforce package struct
  */
-typedef struct GforceData{
-  GforceMsg_t   msgType;
-  union
-  {
-    quaternion_t quaternion;
-    Gesture_t      gesture;
-  } value;
-}GforceData_t;
+typedef struct GForceData
+{
+    GForceMsg_t msgType;
+    union {
+        Quaternion_t    quaternion;
+        Gesture_t       gesture;
+    } value;
+} GForceData_t;
 
-#define GFORCE_PI	3.14159265358979
+//#define GFORCE_PI 3.14159265358979
 //It is only used in single thread
-class gForceAdapter
+class GForceAdapter
 {
   public:
-      gForceAdapter();
-      bool updateData(void);
-      GforceMsg_t  GetMsgType(void);
-      bool ConvertQuatToEuler(quaternion_t *quat,euler_t *euler);
-      bool avaliable(void);
-      bool GetAvaliableData(GforceData_t *gForcepkg);
+    GForceAdapter();
+    bool UpdateData(void);
+    GforceMsg_t GetMsgType(void);
+    bool ConvertQuatToEuler(Quaternion_t *quat, Euler_t *euler);
+    bool Avaliable(void);
+    bool GetAvaliableData(GforceData_t *gForcepkg);
+
   private:
-      bool GetQuaternion(quaternion_t *quat);
-      bool GetGesture(Gesture_t *gesture);
-      unsigned char  mGforceData[MSG_MAX_SIZE];
-      bool mDataAvailable;
-      int  mReceiveDataIndex;    
-      /**
+    bool GetQuaternion(Quaternion_t *quat);
+    bool GetGesture(Gesture_t *gesture);
+    unsigned char mGforceData[MSG_MAX_SIZE];
+    bool mDataAvailable;
+    int mReceiveDataIndex;
+    /**
        * @brief These function only used in converting quaternion to euler
        *  parameter: q0[in]
        */
-      long  ConvertFloatToLong(float q0);
-      long  MultiplyThenShift29(long a, long b);
+    static long FloatToLong(float q);
+    static long MultiplyShift29(long a, long b);
 };
 #endif
