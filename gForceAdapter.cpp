@@ -11,8 +11,6 @@
           {
               *gesture = (mGforceData[EVENTTYP_INDEX]& 0x80) ? (Gesture_t)mGforceData[MSG_LEN_INDEX+2] : (Gesture_t)mGforceData[MSG_LEN_INDEX+1];
               return true; 
-          } else {
-            return false;
           }
       }
       return false;
@@ -27,8 +25,8 @@
 		  quat -> X =*((float*)(&mGforceData[MSG_LEN_INDEX+4+tmpindex]));
 		  quat -> Y =*((float*)(&mGforceData[MSG_LEN_INDEX+8+tmpindex]));
 		  quat -> Z =*((float*)(&mGforceData[MSG_LEN_INDEX+12+tmpindex]));
+		  return true;
           }
-          return false;
       }
       return false;
  }

@@ -98,7 +98,7 @@ class gForceAdapter
       int  mReceiveDataIndex;    
       /**
        * @brief These function only used in converting quaternion to euler
-       *  parameter: q0[in], data[out]
+       *  parameter: q0[in]
        */
       long  ConvertFloatToLong(float q0);
       long  MultiplyThenShift29(long a, long b);
