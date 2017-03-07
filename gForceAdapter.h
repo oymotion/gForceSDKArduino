@@ -71,7 +71,7 @@ typedef struct GForceData
 class GForceAdapter
 {
   public:
-    GForceAdapter(Serial *serial) : m_serial(serial) {}
+    GForceAdapter(HardwareSerial *serial) : m_serial(serial) {}
 
     // SetupSerial
     GForceRet SetupSerial(long baudRate);
