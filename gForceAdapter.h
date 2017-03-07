@@ -1,6 +1,7 @@
 #ifndef GFORCEADAPTER_H
 #define GFORCEADAPTER_H
 
+#include <memory>
 #include <Arduino.h>
 
 ////////////////////////////////////////////////////
@@ -68,10 +69,12 @@ typedef struct GForceData
 } GForceData_t;
 
 //It is only used in single thread
+class GForceAdapterPrivate;
 class GForceAdapter
 {
   public:
-    GForceAdapter(HardwareSerial *serial) : m_serial(serial) {}
+    GForceAdapter(HardwareSerial *serial) : m_impl(new GForceAdapterPrivate(serial)) {}
+    ~GForceAdapter() {}
 
     // SetupSerial
     GForceRet SetupSerial(long baudRate);
@@ -79,25 +82,11 @@ class GForceAdapter
     static GForceRet QuaternionToEuler(const Quaternion_t *quat, Euler_t *euler);
 
   private:
-    Serial    *m_serial;
+    std::unique_ptr<GForceAdapterPrivate> m_impl;
 
-    /**
-       * @brief These function only used in converting quaternion to euler
-       *  parameter: q0[in]
-       */
-    static inline long FloatToLong(float q);
-    static inline long MultiplyShift29(long a, long b);
 };
 
-inline long gForceAdapter::FloatToLong(float q0)
-{
-    return (long)(q0 * (1L << 30));
-}
 
-inline long gForceAdapter::MultiplyShift29(long a, long b)
-{
-    return (long)((float)a * b / (1L << 29));
-}
 
 
 #endif

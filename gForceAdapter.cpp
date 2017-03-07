@@ -16,19 +16,41 @@ enum
 };
 
 
+class GForceAdapterPrivate {
+{
+  public:
+    GForceAdapterPrivate(HardwareSerial *serial) : m_serial(serial) {}
+    ~GForceAdapterPrivate() {}
+
+    // SetupSerial
+    GForceRet SetupSerial(long baudRate);
+    GForceRet GetGForceData(GForceData_t *gForceData);
+
+  private:
+    Serial    *m_serial;
+
+    static inline long FloatToLong(float q) {
+        return (long)(q0 * (1L << 30));
+    }
+
+    static inline long MultiplyShift29(long a, long b) {
+        return (long)((float)a * b / (1L << 29));
+    }
+};
+
 
 ///////////////////////////////////////////////////////////////////////////////////////
 ////////////public function in class gForceAdapter
 
 
-GForceRet gForceAdapter::SetupSerial(long baudRate)
+GForceRet GForceAdapterPrivate::SetupSerial(long baudRate)
 {
     m_serial->begin(baudRate);
 
     return OK;
 }
 
-GForceRet gForceAdapter::GetGForceData(GForceData_t *gForceData)
+GForceRet GForceAdapterPrivate::GetGForceData(GForceData_t *gForceData)
 {
     if (NULL == gForceData) {
         return ERR_ILLEGAL_PARAM;
@@ -151,4 +173,12 @@ GForceRet gForceAdapter::QuatToEuler(const Quaternion_t *quat, Euler_t *euler)
         euler->roll = -180 - euler->roll;
     }
     return true;
+}
+
+GForceRet GForceAdapter::SetupSerial(long baudRate) {
+    return m_impl->SetupSerial(baudRate);
+}
+
+GForceRet GForceAdapterPrivate::GetGForceData(GForceData_t *gForceData) {
+    return m_impl->GetGForceData(gForceData);
 }
