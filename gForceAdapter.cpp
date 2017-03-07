@@ -19,14 +19,9 @@ enum
 
 ///////////////////////////////////////////////////////////////////////////////////////
 ////////////public function in class gForceAdapter
-/**
- * @brief Constructor-Instantiation gForceAdapter object
- */
-gForceAdapter::gForceAdapter() : mDataAvailable(false), mReceivedDataIndex(0)
-{
-}
 
-GForceRet gForceAdapter::SetupSerial(unsigned baudRate)
+
+GForceRet gForceAdapter::SetupSerial(long baudRate)
 {
     m_serial->begin(baudRate);
 
@@ -39,23 +34,7 @@ GForceRet gForceAdapter::GetGForceData(GForceData_t *gForceData)
         return ERR_ILLEGAL_PARAM;
     }
 
-    while (true) {
-        // Read one byte from the serial line
-        int read = m_serial->read();
-        if (-1 == read) {
-            continue;
-        }
- 
-        unsigned char byte = (unsigned char)read;
-        if (byte == MAGNUM_LOW) {
-            while (0 == m_serial->avaliable()) {} // wait for next byte
-            if (MAGNUM_HIGH == (unsigned char)m_serial->read()) {
-                break;
-            }
-        }
-    }
-    
-    int                 i = GFORCE_EVENT_TYPE_INDEX; 
+    int                 i = GFORCE_MAGNUM_LOW_INDEX; 
     bool                hasPackageId;       // package id exists?
     int                 dataPkgLen = -1;    // length of package data
     while (true) {
@@ -64,9 +43,21 @@ GForceRet gForceAdapter::GetGForceData(GForceData_t *gForceData)
         if (-1 == read) {
             continue;
         }
+ 
         unsigned char byte = (unsigned char)read;
 
-        if (i == GFORCE_EVENT_TYPE_INDEX) {
+        if (i == GFORCE_MAGNUM_LOW_INDEX) {
+            if (byte != MAGNUM_LOW) {
+                continue;
+            }
+        }
+        else if (i == GFORCE_MAGNUM_HIGH_INDEX) {
+            if (byte != MAGNUM_HIGH) {
+                i = GFORCE_MAGNUM_LOW_INDEX
+                continue;
+            }
+        }
+        else if (i == GFORCE_EVENT_TYPE_INDEX) {
             hasPackageId = byte & 0x80 ? true : false;
             gForceData->type = byte & ~0x80;
         }

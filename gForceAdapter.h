@@ -74,7 +74,7 @@ class GForceAdapter
     GForceAdapter(Serial *serial) : m_serial(serial) {}
 
     // SetupSerial
-    GForceRet SetupSerial(unsigned baudRate);
+    GForceRet SetupSerial(long baudRate);
     GForceRet GetGForceData(GForceData_t *gForceData);
     static GForceRet QuaternionToEuler(const Quaternion_t *quat, Euler_t *euler);
 
