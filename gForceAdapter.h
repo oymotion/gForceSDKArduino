@@ -85,7 +85,17 @@ class GForceAdapter
        * @brief These function only used in converting quaternion to euler
        *  parameter: q0[in]
        */
-    static long FloatToLong(float q);
-    static long MultiplyShift29(long a, long b);
+    static inline long FloatToLong(float q);
+    static inline long MultiplyShift29(long a, long b);
 };
+
+inline long gForceAdapter::FloatToLong(float q0)
+{
+    return (long)(q0 * (1L << 30));
+}
+
+inline long gForceAdapter::MultiplyShift29(long a, long b)
+{
+    return (long)((float)a * b / (1L << 29));
+}
 #endif

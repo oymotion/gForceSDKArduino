@@ -15,17 +15,7 @@ enum
     GFORCE_MSG_LEN_INDEX      // avaliable data length
 };
 
-long gForceAdapter::FloatToLong(float q0)
-{
-    return (long)(q0 * (1L << 30));
-}
 
-long gForceAdapter::MultiplyShift29(long a, long b)
-{
-    long result;
-    result = (long)((float)a * b / (1L << 29));
-    return result;
-}
 
 ///////////////////////////////////////////////////////////////////////////////////////
 ////////////public function in class gForceAdapter
