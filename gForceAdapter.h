@@ -14,7 +14,7 @@ enum GForceRet {
     ERR_DATA        = -3
 };
 
-// Constants for gestures
+// Type and constants for gestures
 enum Gesture
 {
     RELEASE,    // 0
@@ -28,10 +28,8 @@ enum Gesture
 };
 
 
-/**
- * @brief define quaternion struct
- */
-typedef struct Quaternion
+// Definitions of Quaternion and Euler Angle
+struct Quaternion
 {
     float w;
     float x;
@@ -39,19 +37,14 @@ typedef struct Quaternion
     float z;
 } Quaternion_t;
 
-/**
- * @brief define euler struct
- */
-typedef struct Euler
+struct Euler
 {
     float pitch;
     float roll;
     float yaw;
-} Euler_t;
+};
 
-/**
- * @breif define avaliable gforce package struct
- */
+// Definition of gForce package data
 typedef struct GForceData
 {
     // types
@@ -66,7 +59,7 @@ typedef struct GForceData
         Quaternion_t    quaternion;
         Gesture_t       gesture;
     } value;
-} GForceData_t;
+};
 
 //It is only used in single thread
 class GForceAdapterPrivate;
@@ -76,10 +69,14 @@ class GForceAdapter
     GForceAdapter(HardwareSerial *serial) : m_impl(new GForceAdapterPrivate(serial)) {}
     ~GForceAdapter() {}
 
-    // SetupSerial
+    // Sets up the serial line connection. This function shall be called prior to GetForceData.
     GForceRet SetupSerial(long baudRate);
-    GForceRet GetGForceData(GForceData_t *gForceData);
-    static GForceRet QuaternionToEuler(const Quaternion_t *quat, Euler_t *euler);
+
+    // Reads one gForce package data from the serial line and outputs to gForceData.
+    GForceRet GetGForceData(GForceData *gForceData);
+
+    // Helper function for converting a quaternion to a Euler angle
+    static GForceRet QuaternionToEuler(const Quaternion *quat, Euler *euler);
 
   private:
     std::unique_ptr<GForceAdapterPrivate> m_impl;

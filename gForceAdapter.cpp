@@ -50,7 +50,7 @@ GForceRet GForceAdapterPrivate::SetupSerial(long baudRate)
     return OK;
 }
 
-GForceRet GForceAdapterPrivate::GetGForceData(GForceData_t *gForceData)
+GForceRet GForceAdapterPrivate::GetGForceData(GForceData *gForceData)
 {
     if (NULL == gForceData) {
         return ERR_ILLEGAL_PARAM;
@@ -113,8 +113,7 @@ GForceRet GForceAdapterPrivate::GetGForceData(GForceData_t *gForceData)
     
 }
 
-
-GForceRet gForceAdapter::QuatToEuler(const Quaternion_t *quat, Euler_t *euler)
+GForceRet gForceAdapter::QuatToEuler(const Quaternion *quat, Euler *euler)
 {
     if (NULL != quat || NULL != euler) {
         return ERR_PARAM;
@@ -179,6 +178,6 @@ GForceRet GForceAdapter::SetupSerial(long baudRate) {
     return m_impl->SetupSerial(baudRate);
 }
 
-GForceRet GForceAdapterPrivate::GetGForceData(GForceData_t *gForceData) {
+GForceRet GForceAdapterPrivate::GetGForceData(GForceData *gForceData) {
     return m_impl->GetGForceData(gForceData);
 }
