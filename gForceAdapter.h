@@ -98,4 +98,6 @@ inline long gForceAdapter::MultiplyShift29(long a, long b)
 {
     return (long)((float)a * b / (1L << 29));
 }
+
+
 #endif
