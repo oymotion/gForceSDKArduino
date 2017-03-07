@@ -1,45 +1,26 @@
-#include "gForceAdapter.h"
 #include <math.h>
+#include "gForceAdapter.h"
 
-//////////////////////////////////////////////////////////////////////////////////////
-////////////private function in class gForceAdapter
-bool gForceAdapter::GetGesture(Gesture_t *gesture)
+
+// Magic number
+#define MAGNUM_LOW      ((unsigned char)0xFF)
+#define MAGNUM_HIGH     ((unsinged char)0xAA)
+
+// Indices of data fields
+enum
 {
-    if (mDataAvailable)
-    {
-        if ((mGforceData[EVENT_TYPE_INDEX] & 0x7F) == GFORCE_GESTURE)
-        {
-            *gesture = (mGforceData[EVENT_TYPE_INDEX] & 0x80) ? (Gesture_t)mGforceData[MSG_LEN_INDEX + 2] : (Gesture_t)mGforceData[MSG_LEN_INDEX + 1];
-            return true;
-        }
-    }
-    return false;
+    GFORCE_MAGNUM_LOW_INDEX,  // magic number low byte
+    GFORCE_MAGNUM_HIGH_INDEX, // magic number high byte
+    GFORCE_EVENT_TYPE_INDEX,  // event type
+    GFORCE_MSG_LEN_INDEX      // avaliable data length
+};
+
+long gForceAdapter::FloatToLong(float q0)
+{
+    return (long)(q0 * (1L << 30));
 }
 
-bool gForceAdapter::GetQuaternion(quaternion_t *quat)
-{
-    if (mDataAvailable)
-    {
-        if ((mGforceData[EVENT_TYPE_INDEX] & 0x7F) == GFORCE_QUATERNION)
-        {
-            unsigned int tmpindex = (mGforceData[EVENT_TYPE_INDEX] & 0x80) ? 2 : 1;
-            quat->W = *((float *)(&mGforceData[MSG_LEN_INDEX + tmpindex]));
-            quat->X = *((float *)(&mGforceData[MSG_LEN_INDEX + 4 + tmpindex]));
-            quat->Y = *((float *)(&mGforceData[MSG_LEN_INDEX + 8 + tmpindex]));
-            quat->Z = *((float *)(&mGforceData[MSG_LEN_INDEX + 12 + tmpindex]));
-            return true;
-        }
-    }
-    return false;
-}
-
-long gForceAdapter::ConvertFloatToLong(float q0)
-{
-    long retvalue = q0 * (1L << 30);
-    return retvalue;
-}
-
-long gForceAdapter::MultiplyThenShift29(long a, long b)
+long gForceAdapter::MultiplyShift29(long a, long b)
 {
     long result;
     result = (long)((float)a * b / (1L << 29));
@@ -51,144 +32,126 @@ long gForceAdapter::MultiplyThenShift29(long a, long b)
 /**
  * @brief Constructor-Instantiation gForceAdapter object
  */
-gForceAdapter::gForceAdapter()
+gForceAdapter::gForceAdapter() : mDataAvailable(false), mReceivedDataIndex(0)
 {
-    mDataAvailable = false;
-    mReceiveDataIndex = 0;
-    GforceSerial.begin(115200);
 }
 
-bool gForceAdapter::updateData(void)
+GForceRet gForceAdapter::SetupSerial(unsigned baudRate)
 {
-    while (1)
-    {
-        if (GforceSerial.available())
-        {
-            int tmpData = GforceSerial.read();
-            if (tmpData == -1)
-            {
-                return false;
-            }
-            mDataAvailable = false;
-            unsigned char ctmpData = (unsigned char)tmpData;
-            if (mReceiveDataIndex == MAGNUM_LOW_INDEX)
-            {
-                if (tmpData == MAGNUM_LOW)
-                {
-                    mGforceData[mReceiveDataIndex] = ctmpData;
-                    mReceiveDataIndex++;
-                }
-            }
-            else if (mReceiveDataIndex == MAGNUM_HIGH_INDEX)
-            {
-                if (tmpData == MAGNUM_HIGH)
-                {
-                    mGforceData[mReceiveDataIndex] = ctmpData;
-                    mReceiveDataIndex++;
-                }
-            }
-            else if (mReceiveDataIndex <= 3)
-            {
-                mGforceData[mReceiveDataIndex] = ctmpData;
-                mReceiveDataIndex++;
-            }
-            else if (mReceiveDataIndex > 3)
-            {
-                mGforceData[mReceiveDataIndex] = ctmpData;
-                mReceiveDataIndex++;
-                if (mReceiveDataIndex == mGforceData[MSG_LEN_INDEX] + GFORCE_HEADER_LEN)
-                {
-                    mReceiveDataIndex = 0;
-                    mDataAvailable = true;
-                    return true;
-                }
+    m_serial->begin(baudRate);
+
+    return OK;
+}
+
+GForceRet gForceAdapter::GetGForceData(GForceData_t *gForceData)
+{
+    if (NULL == gForceData) {
+        return ERR_ILLEGAL_PARAM;
+    }
+
+    while (true) {
+        // Read one byte from the serial line
+        int read = m_serial->read();
+        if (-1 == read) {
+            continue;
+        }
+ 
+        unsigned char byte = (unsigned char)read;
+        if (byte == MAGNUM_LOW) {
+            while (0 == m_serial->avaliable()) {} // wait for next byte
+            if (MAGNUM_HIGH == (unsigned char)m_serial->read()) {
+                break;
             }
         }
-        return false;
     }
-}
-
-bool gForceAdapter::GetAvaliableData(GforceData_t *gForcepkg)
-{
-    bool bAvaliableFlag = true;
-    if (mDataAvailable)
-    {
-        GforceMsg_t msgtype = GetMsgType();
-        switch (msgtype)
-        {
-        case Gforce_Quaternion:
-            gForcepkg->msgType = Gforce_Quaternion;
-            GetQuaternion(&((gForcepkg->value).quaternion));
-            break;
-        case Gforce_gesture:
-            gForcepkg->msgType = Gforce_gesture;
-            GetGesture(&((gForcepkg->value).gesture));
-            break;
-        default:
-            gForcepkg->msgType = Gforce_Unknown;
-            bAvaliableFlag = false;
-            break;
+    
+    int                 i = GFORCE_EVENT_TYPE_INDEX; 
+    bool                hasPackageId;       // package id exists?
+    int                 dataPkgLen = -1;    // length of package data
+    while (true) {
+        // Read one byte from the serial line
+        int read = m_serial->read();
+        if (-1 == read) {
+            continue;
         }
+        unsigned char byte = (unsigned char)read;
+
+        if (i == GFORCE_EVENT_TYPE_INDEX) {
+            hasPackageId = byte & 0x80 ? true : false;
+            gForceData->type = byte & ~0x80;
+        }
+        else if (i == GFORCE_MSG_LEN_INDEX) {
+            dataPkgLen = (int)((unsigned)byte;
+            if (hasPackageId) {
+                -- dataPkgLen;
+            }
+            if ((GForceData::QUATERNION == gForceData->type && dataPkgLen != 16) ||
+                (GForceData::GESTURE    == gForceData->type && dataPkgLen !=  1)) {
+                return ERR_DATA;
+            }
+        }
+        else {
+            // skip the package id byte
+            if (hasPackageId) { 
+                hasPackageId = false;
+                continue;
+            }
+
+            *((unsigned char*)&gForceData->value + i - GFORCE_HEADER_LEN) = byte;
+            
+            if (i == GFORCE_MSG_LEN_INDEX + dataPkgLen) {
+                break; // complete
+            }
+        } 
+        ++ i;
     }
-    else
-    {
-        bAvaliableFlag = false;
-    }
-    return bAvaliableFlag;
+
+    return OK;
+    
 }
 
-bool gForceAdapter::avaliable(void)
-{
-    return mDataAvailable;
-}
 
-GforceMsg_t gForceAdapter::GetMsgType(void)
+GForceRet gForceAdapter::QuatToEuler(const Quaternion_t *quat, Euler_t *euler)
 {
-    if (mDataAvailable)
-    {
-        return (GforceMsg_t)(mGforceData[EVENT_TYPE_INDEX] & 0x7F);
+    if (NULL != quat || NULL != euler) {
+        return ERR_PARAM;
     }
-    return Gforce_Unknown;
-}
 
-bool gForceAdapter::ConvertQuatToEuler(quaternion_t *quat, euler_t *euler)
-{
     long t1, t2, t3;
     long q00, q01, q02, q03, q11, q12, q13, q22, q23, q33;
     long quat0, quat1, quat2, quat3;
-    quat0 = ConvertFloatToLong(quat->W);
-    quat1 = ConvertFloatToLong(quat->X);
-    quat2 = ConvertFloatToLong(quat->Y);
-    quat3 = ConvertFloatToLong(quat->Z);
-    q00 = MultiplyThenShift29(quat0, quat0);
-    q01 = MultiplyThenShift29(quat0, quat1);
-    q02 = MultiplyThenShift29(quat0, quat2);
-    q03 = MultiplyThenShift29(quat0, quat3);
-    q11 = MultiplyThenShift29(quat1, quat1);
-    q12 = MultiplyThenShift29(quat1, quat2);
-    q13 = MultiplyThenShift29(quat1, quat3);
-    q22 = MultiplyThenShift29(quat2, quat2);
-    q23 = MultiplyThenShift29(quat2, quat3);
-    q33 = MultiplyThenShift29(quat3, quat3);
+    quat0 = FloatToLong(quat->w);
+    quat1 = FloatToLong(quat->x);
+    quat2 = FloatToLong(quat->y);
+    quat3 = FloatToLong(quat->z);
+    q00 = MultiplyShift29(quat0, quat0);
+    q01 = MultiplyShift29(quat0, quat1);
+    q02 = MultiplyShift29(quat0, quat2);
+    q03 = MultiplyShift29(quat0, quat3);
+    q11 = MultiplyShift29(quat1, quat1);
+    q12 = MultiplyShift29(quat1, quat2);
+    q13 = MultiplyShift29(quat1, quat3);
+    q22 = MultiplyShift29(quat2, quat2);
+    q23 = MultiplyShift29(quat2, quat3);
+    q33 = MultiplyShift29(quat3, quat3);
 
     /* X component of the Ybody axis in World frame */
     t1 = q12 - q03;
 
     /* Y component of the Ybody axis in World frame */
     t2 = q22 + q00 - (1L << 30);
-    euler->Yaw = -atan2f((float)t1, (float)t2) * 180.f / (float)GFORCE_PI;
+    euler->yaw = -atan2f((float)t1, (float)t2) * 180.f / (float)PI;
 
     /* Z component of the Ybody axis in World frame */
     t3 = q23 + q01;
-    euler->Pitch = atan2f((float)t3, sqrtf((float)t1 * t1 + (float)t2 * t2)) * 180.f / (float)GFORCE_PI;
+    euler->pitch = atan2f((float)t3, sqrtf((float)t1 * t1 + (float)t2 * t2)) * 180.f / PI;
     /* Z component of the Zbody axis in World frame */
     t2 = q33 + q00 - (1L << 30);
-    if (t2 < 0)
-    {
-        if (euler->Pitch >= 0)
-            euler->Pitch = 180.f - (euler->Pitch);
+    if (t2 < 0) {
+        if (euler->pitch >= 0)
+            euler->pitch = 180.f - (euler->pitch);
         else
-            euler->Pitch = -180.f - (euler->Pitch);
+            euler->pitch = -180.f - (euler->pitch);
     }
 
     /* X component of the Xbody axis in World frame */
@@ -198,11 +161,13 @@ bool gForceAdapter::ConvertQuatToEuler(quaternion_t *quat, euler_t *euler)
     /* Z component of the Xbody axis in World frame */
     t3 = q13 - q02;
 
-    euler->Roll = (atan2((float)(q33 + q00 - (1L << 30)), (float)(q13 - q02)) * 180.f / (float)GFORCE_PI - 90);
-    if (euler->Roll >= 90)
-        euler->Roll = 180 - euler->Roll;
+    euler->roll = (atan2((float)(q33 + q00 - (1L << 30)), (float)(q13 - q02)) * 180.f / (PI - 90);
+    if (euler->roll >= 90) {
+        euler->roll = 180 - euler->roll;
+    }
 
-    if (euler->Roll < -90)
-        euler->Roll = -180 - euler->Roll;
+    if (euler->roll < -90) {
+        euler->roll = -180 - euler->roll;
+    }
     return true;
 }

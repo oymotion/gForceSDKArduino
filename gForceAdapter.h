@@ -4,42 +4,19 @@
 #include <Arduino.h>
 
 ////////////////////////////////////////////////////
-////marcos gforce data format
-enum
-{
-    MAGNUM_LOW_INDEX,  // magic number low byte
-    MAGNUM_HIGH_INDEX, // magic number high byte
-    EVENT_TYPE_INDEX,  // event type
-    MSG_LEN_INDEX,     // avaliable data length
-    GFORCE_HEADER_LEN  // size of the above in bytes
+
+// Function returns
+enum GForceRet {
+    OK              = 0,
+    ERR_PARAM       = -1,
+    ERR_SERIAL      = -2,
+    ERR_DATA        = -3
 };
 
-// Magic number
-#define MAGNUM_LOW      0xFF
-#define MAGNUM_HIGH     0xAA
-
-// Max bytes of receive message
-//#define MSG_MAX_SIZE 50
-
-// Message types
-typedef enum 
+// Constants for gestures
+enum Gesture
 {
-    GFORCE_QUATERNION   = 0x02,
-    GFORCE_GESTURE      = 0x0F,
-    GFORCE_UNKNOWN // have none available data
-} GforceMsg_t;
-
-
-/**
- * @brief if use Arduino Mega,change the GforceSerial define to com number which you select
- */
-#define GforceSerial Serial
-
-/////////////////////////////////////////////////////
-///////////enum defines
-typedef enum Gesture
-{
-    RELEASE,
+    RELEASE,    // 0
     FIST,
     SPREAD,
     WAVEIN,
@@ -47,7 +24,8 @@ typedef enum Gesture
     PINCH,
     SHOOT,
     UNKNOWN,
-} Gesture_t;
+};
+
 
 /**
  * @brief define quaternion struct
@@ -75,32 +53,34 @@ typedef struct Euler
  */
 typedef struct GForceData
 {
-    GForceMsg_t msgType;
+    // types
+    enum Type
+    {
+        QUATERNION  = 0x02,
+        GESTURE     = 0x0F,
+    };
+
+    Type type;
     union {
         Quaternion_t    quaternion;
         Gesture_t       gesture;
     } value;
 } GForceData_t;
 
-//#define GFORCE_PI 3.14159265358979
 //It is only used in single thread
 class GForceAdapter
 {
   public:
-    GForceAdapter();
-    bool UpdateData(void);
-    GForceMsg_t GetMsgType(void);
-    bool QuaternionToEuler(Quaternion_t *quat, Euler_t *euler);
-    bool Avaliable(void);
-    bool GetAvaliableData(GforceData_t *gForcepkg);
+    GForceAdapter(Serial *serial) : m_serial(serial) {}
+
+    // SetupSerial
+    GForceRet SetupSerial(unsigned baudRate);
+    GForceRet GetGForceData(GForceData_t *gForceData);
+    static GForceRet QuaternionToEuler(const Quaternion_t *quat, Euler_t *euler);
 
   private:
-    static const MSG_MAX_SIZE = 50;
-    bool GetQuaternion(Quaternion_t *quat);
-    bool GetGesture(Gesture_t *gesture);
-    unsigned char mGforceData[MSG_MAX_SIZE];
-    bool mDataAvailable;
-    int mReceiveDataIndex;
+    Serial    *m_serial;
+
     /**
        * @brief These function only used in converting quaternion to euler
        *  parameter: q0[in]
