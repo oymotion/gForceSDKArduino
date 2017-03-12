@@ -3,12 +3,12 @@
 gForceAdapter gforce = gForceAdapter(&Serial);
 void setup()
 {
-      gforce.SetupSerial(115200);
+      gforce.Init();
 }
 
 void loop()
 {
-      GForceData_t gForceData;
+      GF_GForceData_t gForceData;
       if (OK == gforce.GetGForceData(&gForceData))
       {
             
