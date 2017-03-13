@@ -1,6 +1,6 @@
 #include <gForceAdapter.h>
 
-gForceAdapter gforce = gForceAdapter(&Serial);
+GForceAdapter gforce = GForceAdapter(&Serial);
 void setup()
 {
       gforce.Init();
@@ -8,46 +8,46 @@ void setup()
 
 void loop()
 {
-      GF_GForceData_t gForceData;
+      GF_Data gForceData;
       if (OK == gforce.GetGForceData(&gForceData))
       {
             
-            Gesture_t gesture;
+            GF_Gesture gesture;
             switch (gForceData.type)
             {
-            case GForceData::QUATERNION :
+            case GF_Data::QUATERNION :
                   break;
-            case GForceData::GESTURE :
+            case GF_Data::GESTURE :
                   gesture = gForceData.value.gesture;
-                  if (gesture == Fist)
+                  if (gesture == FIST)
                   {
                         Serial.write("Fist\n");
                   }
-                  else if (gesture == Spread)
+                  else if (gesture == SPREAD)
                   {
                         Serial.write("Spread\n");
                   }
-                  else if (gesture == WaveIn)
+                  else if (gesture == WAVEIN)
                   {
                         Serial.write("WaveIn\n");
                   }
-                  else if (gesture == WaveOut)
+                  else if (gesture == WAVEOUT)
                   {
                         Serial.write("WaveOut\n");
                   }
-                  else if (gesture == Pinch)
+                  else if (gesture == PINCH)
                   {
                         Serial.write("Pinch\n");
                   }
-                  else if (gesture == Shoot)
+                  else if (gesture == SHOOT)
                   {
                         Serial.write("Shoot\n");
                   }
-                  else if (gesture == Release)
+                  else if (gesture == RELEASE)
                   {
                         Serial.write("Release\n");
                   }
-                  else if (gesture == Unknown)
+                  else if (gesture == UNKNOWN)
                   {
                         Serial.write("Unknown\n");
                   }

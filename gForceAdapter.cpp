@@ -1,3 +1,33 @@
+/*
+ * Copyright 2017, OYMotion Inc.
+ * 
+ * Redistribution and use in source and binary forms, with or without 
+ * modification, are permitted provided that the following conditions 
+ * are me * t:
+ * 
+ * 1. Redistributions of source code must retain the above copyright 
+ *    notice, this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright 
+ *    notice, this list of conditions and the following disclaimer in  
+ *    the documentation and/or other materials provided with the 
+ *    distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
+ * COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS 
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED 
+ * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF 
+ * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH 
+ * DAMAGE.
+ *
+ */
+
 #include <math.h>
 #include "gForceAdapter.h"
 
@@ -23,11 +53,9 @@ class GForceAdapterPrivate {
   public:
     GForceAdapterPrivate(HardwareSerial *serial) : m_serial(serial) {}
     ~GForceAdapterPrivate() {}
-
-    // SetupSerial
-    GForceRet Init(void);
-    GForceRet GetGForceData(GF_GForceData *gForceData);
-//    GForceRet QuatToEuler(const GF_Quaternion *quat, GF_Euler *euler);
+    
+    GF_Ret Init(void);
+    GF_Ret GetGForceData(GF_Data *gForceData);
 
     static inline long FloatToLong(float q) {
         return (long)(q * (1L << 30));
@@ -41,14 +69,14 @@ class GForceAdapterPrivate {
     HardwareSerial    *m_serial;
 };
 
-GForceRet GForceAdapterPrivate::Init(void)
+GF_Ret GForceAdapterPrivate::Init(void)
 {
     m_serial->begin(m_baudrate);
-
+    m_serial->setTimeout(1);        
     return OK;
 }
 
-GForceRet GForceAdapterPrivate::GetGForceData(GF_GForceData *gForceData)
+GF_Ret GForceAdapterPrivate::GetGForceData(GF_Data *gForceData)
 {
     if (NULL == gForceData) {
         return ERR_PARAM;
@@ -57,11 +85,12 @@ GForceRet GForceAdapterPrivate::GetGForceData(GF_GForceData *gForceData)
     int                 i = GFORCE_MAGNUM_LOW_INDEX; 
     bool                hasPackageId;       // package id exists?
     int                 dataPkgLen = -1;    // length of package data
+    char		readData;
     while (true) {
         // Read one byte from the serial line
-        int readData = m_serial->read();
-        if (-1 == readData) {
-            continue;
+        int readLen = m_serial->readBytes(&readData, 1);
+        if (1 != readLen) {
+            return ERR_DATA;
         }
  
         unsigned char tempByte = (unsigned char)readData;
@@ -79,15 +108,15 @@ GForceRet GForceAdapterPrivate::GetGForceData(GF_GForceData *gForceData)
         }
         else if (i == GFORCE_EVENT_TYPE_INDEX) {
             hasPackageId = tempByte & 0x80 ? true : false;
-            gForceData->type = (GF_GForceData::Type)(tempByte & ~0x80);
+            gForceData->type = (GF_Data::Type)(tempByte & ~0x80);
         }
         else if (i == GFORCE_MSG_LEN_INDEX) {
             dataPkgLen = (int)tempByte;
             if (hasPackageId) {
                 -- dataPkgLen;
             }
-            if ((GF_GForceData::QUATERNION == gForceData->type && dataPkgLen != 16) ||
-                (GF_GForceData::GESTURE    == gForceData->type && dataPkgLen !=  1)) {
+            if ((GF_Data::QUATERNION == gForceData->type && dataPkgLen != 16) ||
+                (GF_Data::GESTURE    == gForceData->type && dataPkgLen !=  1)) {
                 return ERR_DATA;
             }
         }
@@ -113,11 +142,11 @@ GForceRet GForceAdapterPrivate::GetGForceData(GF_GForceData *gForceData)
 
 ///////////////////////////////////////////////////////////////////////////////////////
 ////////////public function in class gForceAdapter
-GForceRet GForceAdapter::Init(void) {
+GF_Ret GForceAdapter::Init(void) {
     return m_impl->Init();
 }
 
-GForceRet GForceAdapter::GetGForceData(GF_GForceData *gForceData) {
+GF_Ret GForceAdapter::GetGForceData(GF_Data *gForceData) {
     return m_impl->GetGForceData(gForceData);
 } 
 
@@ -126,7 +155,7 @@ GForceAdapter::GForceAdapter (HardwareSerial *serial)
     m_impl = new GForceAdapterPrivate(serial) ;
 }
 
-GForceRet GForceAdapter::QuaternionToEuler(const GF_Quaternion *quat, GF_Euler *euler)
+GF_Ret GForceAdapter::QuaternionToEuler(const GF_Quaternion *quat, GF_Euler *euler)
 {
     if (NULL != quat || NULL != euler) {
         return ERR_PARAM;
