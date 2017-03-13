@@ -32,7 +32,6 @@
 #define GFORCEADAPTER_H
 
 #include <Arduino.h>
-
 ////////////////////////////////////////////////////
 // Function returns
 enum GF_Ret {
@@ -45,14 +44,14 @@ enum GF_Ret {
 // Type and constants for gestures
 enum GF_Gesture
 {
-    RELEASE,    
-    FIST,
-    SPREAD,
-    WAVEIN,
-    WAVEOUT,
-    PINCH,
-    SHOOT,
-    UNKNOWN,
+    GF_RELEASE,    
+    GF_FIST,
+    GF_SPREAD,
+    GF_WAVEIN,
+    GF_WAVEOUT,
+    GF_PINCH,
+    GF_SHOOT,
+    GF_UNKNOWN = -1
 };
 
 

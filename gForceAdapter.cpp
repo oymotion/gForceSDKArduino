@@ -65,14 +65,14 @@ class GForceAdapterPrivate {
         return (long)((float)a * b / (1L << 29));
     }
   private:
-    const int         m_baudrate = 115200;
+    const long        m_baudrate = 115200;
     HardwareSerial    *m_serial;
 };
 
 GF_Ret GForceAdapterPrivate::Init(void)
 {
     m_serial->begin(m_baudrate);
-    m_serial->setTimeout(1);        
+    m_serial->setTimeout(10);        
     return OK;
 }
 
@@ -98,13 +98,13 @@ GF_Ret GForceAdapterPrivate::GetGForceData(GF_Data *gForceData)
         if (i == GFORCE_MAGNUM_LOW_INDEX) {
             if (tempByte != MAGNUM_LOW) {
                 continue;
-            }
+            } 
         }
         else if (i == GFORCE_MAGNUM_HIGH_INDEX) {
             if (tempByte != MAGNUM_HIGH) {
                 i = GFORCE_MAGNUM_LOW_INDEX;
                 continue;
-            }
+	    }
         }
         else if (i == GFORCE_EVENT_TYPE_INDEX) {
             hasPackageId = tempByte & 0x80 ? true : false;
@@ -127,8 +127,13 @@ GF_Ret GForceAdapterPrivate::GetGForceData(GF_Data *gForceData)
                 continue;
             }
 
-            *((unsigned char*)&gForceData->value + i - GFORCE_HEADER_LEN) = tempByte;
-            
+            if(gForceData->type == GF_Data::GESTURE) {
+		    gForceData->value.gesture = (GF_Gesture)tempByte;
+	    }
+	    else {
+		    *((unsigned char*)&gForceData->value + i - GFORCE_HEADER_LEN) = tempByte;
+	    }
+
             if (i == GFORCE_MSG_LEN_INDEX + dataPkgLen) {
                 break; // complete
             }
@@ -142,11 +147,13 @@ GF_Ret GForceAdapterPrivate::GetGForceData(GF_Data *gForceData)
 
 ///////////////////////////////////////////////////////////////////////////////////////
 ////////////public function in class gForceAdapter
-GF_Ret GForceAdapter::Init(void) {
+GF_Ret GForceAdapter::Init(void)
+{
     return m_impl->Init();
 }
 
-GF_Ret GForceAdapter::GetGForceData(GF_Data *gForceData) {
+GF_Ret GForceAdapter::GetGForceData(GF_Data *gForceData)
+{
     return m_impl->GetGForceData(gForceData);
 } 
 
