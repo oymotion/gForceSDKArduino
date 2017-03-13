@@ -72,31 +72,31 @@ void loop()
         break;
       case GF_Data::GESTURE :
         gesture = gForceData.value.gesture;
-        if (gesture == FIST)
+        if (gesture == GF_FIST)
         {
           digitalWrite(GFORCE_FIST_PIN, HIGH);
         }
-        else if (gesture == SPREAD)
+        else if (gesture == GF_SPREAD)
         {
           digitalWrite(GFORCE_SPREAD_PIN, HIGH);
         }
-        else if (gesture == WAVEIN)
+        else if (gesture == GF_WAVEIN)
         {
           digitalWrite(GFORCE_WAVEIN_PIN, HIGH);
         }
-        else if (gesture == WAVEOUT)
+        else if (gesture == GF_WAVEOUT)
         {
           digitalWrite(GFORCE_WAVEOUT_PIN, HIGH);
         }
-        else if (gesture == PINCH)
+        else if (gesture == GF_PINCH)
         {
           digitalWrite(GFORCE_PINCH_PIN, HIGH);
         }
-        else if (gesture == SHOOT)
+        else if (gesture == GF_SHOOT)
         {
           digitalWrite(GFORCE_SHOOT_PIN, HIGH);
         }
-        else if (gesture == RELEASE)
+        else if (gesture == GF_RELEASE)
         {
           digitalWrite(GFORCE_FIST_PIN, LOW);
           digitalWrite(GFORCE_SPREAD_PIN, LOW);
@@ -105,7 +105,7 @@ void loop()
           digitalWrite(GFORCE_PINCH_PIN, LOW);
           digitalWrite(GFORCE_SHOOT_PIN, LOW);
         }
-        else if (gesture == UNKNOWN)
+        else if (gesture == GF_UNKNOWN)
         {
           digitalWrite(GFORCE_FIST_PIN, HIGH);
           digitalWrite(GFORCE_SPREAD_PIN, HIGH);
