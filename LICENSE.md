@@ -1,4 +1,4 @@
-##License
+#License
 
 Copyright 2017, OYMotion Inc. All rights reserved.
 
