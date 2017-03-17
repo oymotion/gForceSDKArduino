@@ -100,6 +100,7 @@ public:
 
 	//judge the gesture if had received before next gesture received.
 	//if received, the return value is one, Ohterwise zero.
+	//It just used for scratch
 	int     GotGesture(GF_Gesture gesture);
 
 	// Helper function for converting a quaternion to a Euler angle

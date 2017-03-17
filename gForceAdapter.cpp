@@ -83,6 +83,7 @@ GF_Ret GForceAdapterPrivate::Init(void)
 	return OK;
 }
 
+
 int GForceAdapterPrivate::GotGesture(GF_Gesture gesture)
 {
 	GF_Data recData;
