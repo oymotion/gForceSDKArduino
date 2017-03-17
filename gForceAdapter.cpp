@@ -51,12 +51,12 @@ enum {
 class GForceAdapterPrivate
 {
 public:
-	GForceAdapterPrivate(HardwareSerial* serial) : m_serial(serial) {}
+	GForceAdapterPrivate(HardwareSerial *serial) : m_serial(serial) {}
 	~GForceAdapterPrivate() {}
 
 	GF_Ret Init(void);
 	GF_Ret GetGForceData(GF_Data* gForceData);
-
+	int	GotGesture(GF_Gesture gesture);
 	static inline long FloatToLong(float q)
 	{
 		return (long)(q * (1L << 30));
@@ -68,14 +68,44 @@ public:
 	}
 private:
 	const long        m_baudrate = 115200;
-	HardwareSerial*    m_serial;
-};
+	HardwareSerial*   m_serial;
+	GF_Gesture m_gestureBuf;     
+	bool	   m_exitGestureFlag;	
+	bool	   m_releaseFlag;
+};      
+
 
 GF_Ret GForceAdapterPrivate::Init(void)
 {
 	m_serial->begin(m_baudrate);
-	m_serial->setTimeout(10);
+	m_serial->setTimeout(5);
+	m_exitGestureFlag = false;
 	return OK;
+}
+
+int GForceAdapterPrivate::GotGesture(GF_Gesture gesture)
+{
+	GF_Data recData;
+	if((OK == GetGForceData(&recData)) && (recData.type == GF_Data::GESTURE)) {
+			if(recData.value.gesture == GF_RELEASE) {
+				return 0;
+			}
+			m_exitGestureFlag = true;
+			m_gestureBuf = recData.value.gesture;
+			if(gesture == m_gestureBuf) {
+				m_exitGestureFlag = false;
+				return 1;
+			}
+			return 0;
+	} else {
+		if(m_exitGestureFlag) {
+			if(gesture == m_gestureBuf) {
+				m_exitGestureFlag = false;
+				return 1;
+			}
+		}
+		return 0;
+	}
 }
 
 GF_Ret GForceAdapterPrivate::GetGForceData(GF_Data* gForceData)
@@ -154,9 +184,38 @@ GF_Ret GForceAdapter::GetGForceData(GF_Data* gForceData)
 	return m_impl->GetGForceData(gForceData);
 }
 
-GForceAdapter::GForceAdapter(HardwareSerial* serial)
+int GForceAdapter::GotGesture(GF_Gesture gesture)
 {
-	m_impl = new GForceAdapterPrivate(serial) ;
+	return m_impl->GotGesture(gesture);
+}
+
+GForceAdapter::GForceAdapter(int comNum)
+{
+	HardwareSerial *serial[4];
+#if defined(HAVE_HWSERIAL0)
+	serial[0] = &Serial;
+#endif
+#if defined(HAVE_HWSERIAL1)
+	serial[1] = &Serial1;
+#else
+	serial[1] = &Serial;
+#endif
+#if defined(HAVE_HWSERIAL2)
+	serial[2] = &Serial2;
+#else
+	serial[2] = &Serial;
+#endif
+#if defined(HAVE_HWSERIAL3)
+	serial[3] = &Serial3;
+#else
+	serial[3] = &Serial;
+#endif
+	m_impl = new GForceAdapterPrivate(serial[comNum]) ;
+}
+
+GForceAdapter::GForceAdapter(HardwareSerial *serial)
+{
+	m_impl = new GForceAdapterPrivate(serial);
 }
 
 GF_Ret GForceAdapter::QuaternionToEuler(const GF_Quaternion* quat,

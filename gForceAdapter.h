@@ -88,7 +88,8 @@ class GForceAdapterPrivate;
 class GForceAdapter
 {
 public:
-	GForceAdapter(HardwareSerial* serial) ;
+	GForceAdapter(int comNum = 0);
+	GForceAdapter(HardwareSerial *serial);
 	~GForceAdapter() {}
 
 	// Sets up the serial line connection. This function shall be called prior to GetForceData.
@@ -96,6 +97,10 @@ public:
 
 	// Reads one gForce package data from the serial line and outputs to gForceData.
 	GF_Ret GetGForceData(GF_Data* gForceData);
+
+	//judge the gesture if had received before next gesture received.
+	//if received, the return value is one, Ohterwise zero.  
+	int 	GotGesture(GF_Gesture gesture);
 
 	// Helper function for converting a quaternion to a Euler angle
 	static GF_Ret QuaternionToEuler(const GF_Quaternion* quat, GF_Euler* euler);
