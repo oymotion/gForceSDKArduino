@@ -51,12 +51,12 @@ enum {
 class GForceAdapterPrivate
 {
 public:
-	GForceAdapterPrivate(HardwareSerial *serial) : m_serial(serial) {}
+	GForceAdapterPrivate(HardwareSerial* serial) : m_serial(serial) {}
 	~GForceAdapterPrivate() {}
 
 	GF_Ret Init(void);
 	GF_Ret GetGForceData(GF_Data* gForceData);
-	int	GotGesture(GF_Gesture gesture);
+	int     GotGesture(GF_Gesture gesture);
 	static inline long FloatToLong(float q)
 	{
 		return (long)(q * (1L << 30));
@@ -69,10 +69,10 @@ public:
 private:
 	const long        m_baudrate = 115200;
 	HardwareSerial*   m_serial;
-	GF_Gesture m_gestureBuf;     
-	bool	   m_exitGestureFlag;	
-	bool	   m_releaseFlag;
-};      
+	GF_Gesture m_gestureBuf;
+	bool       m_exitGestureFlag;
+	bool       m_releaseFlag;
+};
 
 
 GF_Ret GForceAdapterPrivate::Init(void)
@@ -86,20 +86,20 @@ GF_Ret GForceAdapterPrivate::Init(void)
 int GForceAdapterPrivate::GotGesture(GF_Gesture gesture)
 {
 	GF_Data recData;
-	if((OK == GetGForceData(&recData)) && (recData.type == GF_Data::GESTURE)) {
-			if(recData.value.gesture == GF_RELEASE) {
-				return 0;
-			}
-			m_exitGestureFlag = true;
-			m_gestureBuf = recData.value.gesture;
-			if(gesture == m_gestureBuf) {
-				m_exitGestureFlag = false;
-				return 1;
-			}
+	if ((OK == GetGForceData(&recData)) && (recData.type == GF_Data::GESTURE)) {
+		if (recData.value.gesture == GF_RELEASE) {
 			return 0;
+		}
+		m_exitGestureFlag = true;
+		m_gestureBuf = recData.value.gesture;
+		if (gesture == m_gestureBuf) {
+			m_exitGestureFlag = false;
+			return 1;
+		}
+		return 0;
 	} else {
-		if(m_exitGestureFlag) {
-			if(gesture == m_gestureBuf) {
+		if (m_exitGestureFlag) {
+			if (gesture == m_gestureBuf) {
 				m_exitGestureFlag = false;
 				return 1;
 			}
@@ -191,7 +191,7 @@ int GForceAdapter::GotGesture(GF_Gesture gesture)
 
 GForceAdapter::GForceAdapter(int comNum)
 {
-	HardwareSerial *serial[4];
+	HardwareSerial* serial[4];
 #if defined(HAVE_HWSERIAL0)
 	serial[0] = &Serial;
 #endif
@@ -213,7 +213,7 @@ GForceAdapter::GForceAdapter(int comNum)
 	m_impl = new GForceAdapterPrivate(serial[comNum]) ;
 }
 
-GForceAdapter::GForceAdapter(HardwareSerial *serial)
+GForceAdapter::GForceAdapter(HardwareSerial* serial)
 {
 	m_impl = new GForceAdapterPrivate(serial);
 }
