@@ -84,28 +84,28 @@ GF_Ret GForceAdapterPrivate::Init(void)
 }
 
 
-int GForceAdapterPrivate::GotGesture(GF_Gesture gesture)
+bool GForceAdapterPrivate::GotGesture(GF_Gesture gesture)
 {
 	GF_Data recData;
 	if ((OK == GetGForceData(&recData)) && (recData.type == GF_Data::GESTURE)) {
 		if (recData.value.gesture == GF_RELEASE) {
-			return 0;
+			return false;
 		}
 		m_exitGestureFlag = true;
 		m_gestureBuf = recData.value.gesture;
 		if (gesture == m_gestureBuf) {
 			m_exitGestureFlag = false;
-			return 1;
+			return true;
 		}
-		return 0;
+		return false;
 	} else {
 		if (m_exitGestureFlag) {
 			if (gesture == m_gestureBuf) {
 				m_exitGestureFlag = false;
-				return 1;
+				return true;
 			}
 		}
-		return 0;
+		return false;
 	}
 }
 
