@@ -56,7 +56,7 @@ public:
 
 	GF_Ret Init(void);
 	GF_Ret GetGForceData(GF_Data* gForceData);
-	int     GotGesture(GF_Gesture gesture);
+	bool GotGesture(GF_Gesture gesture);
 	static inline long FloatToLong(float q)
 	{
 		return (long)(q * (1L << 30));
@@ -185,7 +185,7 @@ GF_Ret GForceAdapter::GetGForceData(GF_Data* gForceData)
 	return m_impl->GetGForceData(gForceData);
 }
 
-int GForceAdapter::GotGesture(GF_Gesture gesture)
+bool GForceAdapter::GotGesture(GF_Gesture gesture)
 {
 	return m_impl->GotGesture(gesture);
 }
