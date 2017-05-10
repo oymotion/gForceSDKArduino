@@ -43,3 +43,9 @@ quaternions over UART.
     > and spend several minutes learning and training yourself. The recognition
     > rate can reach 95% and higher after you get familiar with doing the
     > gestures.
+
+## Trouble shooting
+1. Some Arduino boards may use GPIO to stimulate UART, alleged software UART.
+   This may consume most of the CPU cycles and cause problems with processing
+   quaternion data. Quaternion data packages may be dropped in this situation.
+   If you meet this problem,  you will have to use hardware UART instead.
