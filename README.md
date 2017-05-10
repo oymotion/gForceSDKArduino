@@ -24,15 +24,16 @@ quaternions over UART.
     * Wire the gForceJoint, which is included in the gForce Embedded Suite, to
       the Arduino board. The gForceJoint is BLE module used for connecting
       the gForce armband to Arduino. Turn on your Arduino board and connect it
-      to your development PC.
+      to your development PC with Arduino IDE.
 
-    * On your development PC, select `File -> Example -> gForce -> SimpleControlByGesture`
+    * In the Arduino IDE, select `File -> Example -> gForce -> SimpleControlByGesture`
       to open the the example code. Modify the code if needed, then build,
       download and run it.
 
     * Turn on the gForce armband, and appoach it to the gForceJoint to connect
-      to the Arduino over BLE. Make sure the connection is done by checking the
-      light on the gForce armband flashes fast. Put it on your right forearm.
+      to the Arduino over BLE. Make sure the connection is established by
+      checking if the light on the gForce armband flashes fast. And then put
+      it on your right forearm.
 
     * Do the gestures and check if the corresponding Arduino pins output
       correctly.
