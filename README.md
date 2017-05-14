@@ -6,8 +6,8 @@ Arduino-compatible devices. It offers an easy way for Arduino-alike devices to
 connect to gForce armband and read gForce armband data such as gestures and
 quaternions.
 
-A gForce Embedded Suite hardware includes a gForce armband and a gForceJoint. 
-The gForceJoint is a hardware module that bridges the gForce armband over BLE  
+A gForce Embedded Suite includes a gForce armband and a gForceJoint. 
+The gForceJoint is a hardware module that bridges the gForce armband over BLE 
 to the Arduino board over UART.
 
 ## Usage
