@@ -34,94 +34,88 @@
 #include <Arduino.h>
 ////////////////////////////////////////////////////
 // Function returns
-enum GF_Ret {
-	OK              = 0,
-	ERR_PARAM       = -1,
-	ERR_SERIAL      = -2,
-	ERR_DATA        = -3
-};
+enum GF_Ret { OK = 0, ERR_PARAM = -1, ERR_SERIAL = -2, ERR_DATA = -3 };
 
 // Type and constants for gestures
 enum GF_Gesture {
-	GF_RELEASE,
-	GF_FIST,
-	GF_SPREAD,
-	GF_WAVEIN,
-	GF_WAVEOUT,
-	GF_PINCH,
-	GF_SHOOT,
-	GF_UNKNOWN = -1
+    GF_RELEASE,
+    GF_FIST,
+    GF_SPREAD,
+    GF_WAVEIN,
+    GF_WAVEOUT,
+    GF_PINCH,
+    GF_SHOOT,
+    GF_UNKNOWN = -1
 };
-
 
 // Definitions of Quaternion and Euler Angle
 struct GF_Quaternion {
-	float w;
-	float x;
-	float y;
-	float z;
+    float w;
+    float x;
+    float y;
+    float z;
 };
 
 struct GF_Euler {
-	float pitch;
-	float roll;
-	float yaw;
+    float pitch;
+    float roll;
+    float yaw;
 };
 
 // Definition of gForce package data
 struct GF_Data {
-	// message type
-	enum Type {
-		QUATERNION  = 0x02,
-		GESTURE     = 0x0F,
-	};
+    // message type
+    enum Type {
+        QUATERNION = 0x02,
+        GESTURE    = 0x0F,
+    };
 
-	Type type;
-	union {
-		GF_Quaternion   quaternion;
-		GF_Gesture       gesture;
-	} value;
+    Type type;
+    union {
+        GF_Quaternion quaternion;
+        GF_Gesture    gesture;
+    } value;
 };
 
-//It is only used in single thread
+// It is only used in single thread
 class GForceAdapterPrivate;
 
-/// 
-/// The class of gForce adapter 
 ///
-class GForceAdapter
-{
-public:
-	GForceAdapter(int comNum = 0);
-	GForceAdapter(HardwareSerial* serial);
-	~GForceAdapter() {}
+/// The class of gForce adapter
+///
+class GForceAdapter {
+  public:
+    GForceAdapter(int comNum = 0);
+    GForceAdapter(HardwareSerial *serial);
+    ~GForceAdapter() {}
 
-	///
-	/// Brief Sets up the serial line connection. This function shall be called prior to GetForceData.
-	///
-	GF_Ret Init(void);
+    ///
+    /// Brief Sets up the serial line connection. This function shall be called
+    /// prior to GetForceData.
+    ///
+    GF_Ret Init(void);
 
-	///
-	/// Reads one gForce package data from the serial line and outputs to gForceData.
-	///
-	/// \param[out] gForceData The GF_Data structure to store gForceData.
-	/// \return
-	GF_Ret GetGForceData(GF_Data* gForceData);
+    ///
+    /// Reads one gForce package data from the serial line and outputs to
+    /// gForceData.
+    ///
+    /// \param[out] gForceData The GF_Data structure to store gForceData.
+    /// \return
+    GF_Ret GetGForceData(GF_Data *gForceData);
 
-	///
-	/// Checks if a specified gesture is received.
-	/// This function is used by the Scratch plugin.
-	///
-	/// \param[in] gesture The specified gesture to check
-	/// \return true if the specified gesture is received; otherwise false
-	bool	GotGesture(GF_Gesture gesture);
+    ///
+    /// Checks if a specified gesture is received.
+    /// This function is used by the Scratch plugin.
+    ///
+    /// \param[in] gesture The specified gesture to check
+    /// \return true if the specified gesture is received; otherwise false
+    bool GotGesture(GF_Gesture gesture);
 
-	// Helper function for converting a quaternion to a Euler angle
-	static GF_Ret QuaternionToEuler(const GF_Quaternion* quat, GF_Euler* euler);
+    // Helper function for converting a quaternion to a Euler angle
+    static GF_Ret QuaternionToEuler(const GF_Quaternion *quat, GF_Euler *euler);
 
-private:
-	GForceAdapterPrivate* m_impl;
-
+  private:
+    GForceAdapterPrivate *m_impl;
 };
 
 #endif
