@@ -23,7 +23,7 @@ to the Arduino board over UART.
     will output high when its corresponding gesture from gForce armband is
     received.
 
-    The following steps will instruct you to run the example code:
+    The following steps will instruct you to running the example code:
 
     * Wire the gForceJoint to the Arduino board. And then turn on the Arduino 
       board and connect it to your development PC with Arduino IDE.
@@ -43,7 +43,7 @@ to the Arduino board over UART.
 
     **Note:**
     > To make sure gForce armband can recognize your gestures, please refer to
-    > [Guide to Making Gestures][GuideToPerformingGestures]
+    > [Guide to Performing Gestures][GuideToPerformingGestures]
     > and spend several minutes learning and training yourself. The recognition
     > rate can reach 95% and even higher after you get familiar with performing 
     > the gestures properly.
