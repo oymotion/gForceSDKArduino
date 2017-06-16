@@ -1,12 +1,12 @@
 # gForce SDK for Arduino
 
-## Brief
+## Overview
 gForce SDK for Arduino is for using [gForce Embedded Suite][gForceEmbeddedSuite] 
 in Arduino and Arduino-compatible devices. It offers an easy way for 
 Arduino-alike devices to connect to [gForce Armband][gForceArmband] and read 
 data such as gestures and quaternions from it.
 
-A gForce Embedded Suite includes a gForce armband and a gForceJoint. 
+A gForce Embedded Suite includes a gForce Armband and a gForceJoint. 
 The gForceJoint is a hardware module that bridges the gForce armband over BLE 
 to the Arduino board over UART.
 
@@ -25,27 +25,28 @@ to the Arduino board over UART.
 
     The following steps will instruct you to run the example code:
 
-    * Wire the gForceJoint to the Arduino board. And then turn on your Arduino 
+    * Wire the gForceJoint to the Arduino board. And then turn on the Arduino 
       board and connect it to your development PC with Arduino IDE.
 
     * In the Arduino IDE, select `File -> Example -> gForce -> SimpleControlByGesture`
       to open the the example code. Modify the code if needed, then build,
       download and run it.
 
-    * Turn on the gForce armband, and appoach it to the gForceJoint to connect
-      to the Arduino board over BLE. Make sure the connection is established by
-      checking if the LED on the gForce armband flashes fast. And then put
-      it on your right forearm.
+    * Turn on the gForce Armband, and appoach it to the gForceJoint as close as 
+      possible to make them connect with each other via BLE. Make sure the 
+      connection is established by checking if the green light LED on the 
+      gForce Armband flashes fast. And then wear the gForce Armband on your 
+      right forearm.
 
-    * Do the gestures and check if the corresponding Arduino pins output
-      correctly.
+    * [Perform gestures][GuideToPerformGestures] and check if the corresponding 
+      Arduino pins output correctly.
 
     **Note:**
     > To make sure gForce armband can recognize your gestures, please refer to
-    > [Guide to Making Gestures](http://www.tudou.com/programs/view/7ETsgGTRw2k/)
+    > [Guide to Making Gestures][GuideToPerformGestures]
     > and spend several minutes learning and training yourself. The recognition
-    > rate can reach 95% and even higher after you get familiar with doing the
-    > gestures.
+    > rate can reach 95% and even higher after you get familiar with performing 
+    > the gestures properly.
 
 ## Trouble shooting
 1. Some Arduino boards may use GPIO to stimulate UART, alleged software UART.
@@ -55,3 +56,4 @@ to the Arduino board over UART.
 
 [gForceEmbeddedSuite]: https://oymotion.github.io/doc/gForce100EmbeddedSuiteUserGuide/
 [gForceArmband]: https://oymotion.github.io/doc/gForce100UserGuide/
+[GuideToPerformGestures]: https://www.youtube.com/watch?v=wBsYJf0wrkk  
