@@ -38,12 +38,12 @@ to the Arduino board over UART.
       gForce Armband flashes fast. And then wear the gForce Armband on your 
       right forearm.
 
-    * [Perform gestures][GuideToPerformGestures] and check if the corresponding 
+    * [Perform gestures][GuideToPerformingGestures] and check if the corresponding 
       Arduino pins output correctly.
 
     **Note:**
     > To make sure gForce armband can recognize your gestures, please refer to
-    > [Guide to Making Gestures][GuideToPerformGestures]
+    > [Guide to Making Gestures][GuideToPerformingGestures]
     > and spend several minutes learning and training yourself. The recognition
     > rate can reach 95% and even higher after you get familiar with performing 
     > the gestures properly.
@@ -56,4 +56,4 @@ to the Arduino board over UART.
 
 [gForceEmbeddedSuite]: https://oymotion.github.io/doc/gForce100EmbeddedSuiteUserGuide/
 [gForceArmband]: https://oymotion.github.io/doc/gForce100UserGuide/
-[GuideToPerformGestures]: https://www.youtube.com/watch?v=wBsYJf0wrkk  
+[GuideToPerformingGestures]: https://www.youtube.com/watch?v=wBsYJf0wrkk  
