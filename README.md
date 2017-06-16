@@ -1,23 +1,23 @@
 # gForce SDK for Arduino
 
 ## Brief
-The gForce SDK for Arduino is for using the gForce Embedded Suite in Arduino and
-Arduino-compatible devices. It offers an easy way for Arduino-alike devices to
-connect to gForce armband and read gForce armband data such as gestures and
-quaternions.
+gForce SDK for Arduino is for using [gForce Embedded Suite][gForceEmbeddedSuite] 
+in Arduino and Arduino-compatible devices. It offers an easy way for 
+Arduino-alike devices to connect to [gForce Armband][gForceArmband] and read 
+data such as gestures and quaternions from it.
 
 A gForce Embedded Suite includes a gForce armband and a gForceJoint. 
 The gForceJoint is a hardware module that bridges the gForce armband over BLE 
 to the Arduino board over UART.
 
 ## Usage
-1. Import the gForce SDK for Arduino
+1. Importing the gForce SDK for Arduino
 
     `zip` all files of this source code into a package file, say `gForce.zip`.
     Open the Arduino IDE, select `Sketch -> Include Library -> Add .ZIP library`,
     and then select `gForce.zip`.
 
-2. Open and run the example code
+2. Opening and running the example code
 
     The example code maps six Arduino GPIO pins to six gestures. A GPIO pin
     will output high when its corresponding gesture from gForce armband is
@@ -52,3 +52,6 @@ to the Arduino board over UART.
    This may consume most of the CPU cycles and cause problems with processing
    quaternion data. Quaternion data packages may be dropped in this situation.
    If you meet such a problem,  you may have to use a hardware UART instead.
+
+[gForceEmbeddedSuite]: https://oymotion.github.io/doc/gForce100EmbeddedSuiteUserGuide/
+[gForceArmband]: https://oymotion.github.io/doc/gForce100UserGuide/
