@@ -31,7 +31,12 @@
 #ifndef GFORCEADAPTER_H
 #define GFORCEADAPTER_H
 
-#include <Arduino.h>
+#if defined(ARDUINO) && ARDUINO >= 100
+#include "Arduino.h"
+#else
+#include "WProgram.h"
+#endif
+
 ////////////////////////////////////////////////////
 // Function returns
 enum GF_Ret { OK = 0, ERR_PARAM = -1, ERR_SERIAL = -2, ERR_DATA = -3 };

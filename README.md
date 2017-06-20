@@ -25,8 +25,8 @@ to the Arduino board over UART.
 
     The following steps will instruct you to running the example code:
 
-    * Wire the gForceJoint to the Arduino board. And then turn on the Arduino 
-      board and connect it to your development PC with Arduino IDE.
+    * Wire the gForceJoint to the Arduino board, and then turn on the Arduino 
+      board after connecting it to your development PC with Arduino IDE.
 
     * In the Arduino IDE, select `File -> Example -> gForce -> SimpleControlByGesture`
       to open the the example code. Modify the code if needed, then build,
@@ -49,7 +49,7 @@ to the Arduino board over UART.
     > the gestures properly.
 
 ## Trouble shooting
-1. Some Arduino boards may use GPIO to stimulate UART, alleged software UART.
+1. Some Arduino boards may use GPIO to simulate UART, alleged software UART.
    This may consume most of the CPU cycles and cause problems with processing
    quaternion data. Quaternion data packages may be dropped in this situation.
    If you meet such a problem,  you may have to use a hardware UART instead.
