@@ -203,7 +203,7 @@ GForceAdapter::GForceAdapter(HardwareSerial *serial) {
 
 GF_Ret GForceAdapter::QuaternionToEuler(const GF_Quaternion *quat,
                                         GF_Euler *           euler) {
-    if (NULL != quat || NULL != euler) {
+    if ((NULL == quat) || (NULL == euler)) {
         return ERR_PARAM;
     }
 
