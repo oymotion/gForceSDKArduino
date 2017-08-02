@@ -54,11 +54,6 @@ class GForceAdapterPrivate {
     GF_Ret Init(void);
     GF_Ret GetGForceData(GF_Data *gForceData);
     bool GotGesture(GF_Gesture gesture);
-    static inline long FloatToLong(float q) { return (long)(q * (1L << 30)); }
-
-    static inline long MultiplyShift29(long a, long b) {
-        return (long)((float)a * b / (1L << 29));
-    }
 
   private:
     const long      m_baudrate = 115200;
