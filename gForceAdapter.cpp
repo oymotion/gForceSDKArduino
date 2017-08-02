@@ -206,61 +206,20 @@ GF_Ret GForceAdapter::QuaternionToEuler(const GF_Quaternion *quat,
     if ((NULL == quat) || (NULL == euler)) {
         return ERR_PARAM;
     }
-
-    long t1, t2, t3;
-    long q00, q01, q02, q03, q11, q12, q13, q22, q23, q33;
-    long quat0, quat1, quat2, quat3;
-    quat0 = GForceAdapterPrivate::FloatToLong(quat->w);
-    quat1 = GForceAdapterPrivate::FloatToLong(quat->x);
-    quat2 = GForceAdapterPrivate::FloatToLong(quat->y);
-    quat3 = GForceAdapterPrivate::FloatToLong(quat->z);
-    q00   = GForceAdapterPrivate::MultiplyShift29(quat0, quat0);
-    q01   = GForceAdapterPrivate::MultiplyShift29(quat0, quat1);
-    q02   = GForceAdapterPrivate::MultiplyShift29(quat0, quat2);
-    q03   = GForceAdapterPrivate::MultiplyShift29(quat0, quat3);
-    q11   = GForceAdapterPrivate::MultiplyShift29(quat1, quat1);
-    q12   = GForceAdapterPrivate::MultiplyShift29(quat1, quat2);
-    q13   = GForceAdapterPrivate::MultiplyShift29(quat1, quat3);
-    q22   = GForceAdapterPrivate::MultiplyShift29(quat2, quat2);
-    q23   = GForceAdapterPrivate::MultiplyShift29(quat2, quat3);
-    q33   = GForceAdapterPrivate::MultiplyShift29(quat3, quat3);
-
-    /* X component of the Ybody axis in World frame */
-    t1 = q12 - q03;
-
-    /* Y component of the Ybody axis in World frame */
-    t2         = q22 + q00 - (1L << 30);
-    euler->yaw = -atan2f((float)t1, (float)t2) * 180.f / (float)PI;
-
-    /* Z component of the Ybody axis in World frame */
-    t3 = q23 + q01;
-    euler->pitch =
-        atan2f((float)t3, sqrtf((float)t1 * t1 + (float)t2 * t2)) * 180.f / PI;
-    /* Z component of the Zbody axis in World frame */
-    t2 = q33 + q00 - (1L << 30);
-    if (t2 < 0) {
-        if (euler->pitch >= 0) {
-            euler->pitch = 180.f - (euler->pitch);
-        } else {
-            euler->pitch = -180.f - (euler->pitch);
-        }
+    double test = quat->y * quat->z + quat->x * quat->w;
+    if (abs(test) > 0.4999f) {
+        int symbol   = (test > 0.4999f) ? 1 : -1;
+        euler->yaw   = symbol * 2 * atan2f(quat->y, quat->w) * 180 / M_PI;
+        euler->pitch = symbol * 90.f;
+        euler->roll  = 0.f;
+        return OK;
     }
-
-    /* X component of the Xbody axis in World frame */
-    t1 = q11 + q00 - (1L << 30);
-    /* Y component of the Xbody axis in World frame */
-    t2 = q12 + q03;
-    /* Z component of the Xbody axis in World frame */
-    t3 = q13 - q02;
-
-    euler->roll = atan2f(((float)(q33 + q00 - (1L << 30))),
-                         (float)(q13 - q02) * 180.f / (PI - 90));
-    if (euler->roll >= 90) {
-        euler->roll = 180 - euler->roll;
-    }
-
-    if (euler->roll < -90) {
-        euler->roll = -180 - euler->roll;
-    }
+    euler->yaw = atan2f((2 * quat->z * quat->w - 2 * quat->x * quat->y),
+                        (1 - 2 * quat->x * quat->x - 2 * quat->z * quat->z)) *
+                 180 / M_PI;
+    euler->pitch = (float)asin(2 * test) * 180 / M_PI;
+    euler->roll  = atan2f((2 * quat->y * quat->w - 2 * quat->x * quat->z),
+                         (1 - 2 * quat->x * quat->x - 2 * quat->y * quat->y)) *
+                  180 / M_PI;
     return OK;
 }
