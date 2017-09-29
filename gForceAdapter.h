@@ -91,7 +91,7 @@ class GForceAdapterPrivate;
 class GForceAdapter {
   public:
     GForceAdapter(int comNum = 0);
-    GForceAdapter(HardwareSerial *serial);
+    GForceAdapter(HardwareSerial &serial);
     ~GForceAdapter() {}
 
     ///
@@ -106,7 +106,7 @@ class GForceAdapter {
     ///
     /// \param[out] gForceData The GF_Data structure to store gForceData.
     /// \return
-    GF_Ret GetGForceData(GF_Data *gForceData);
+    GF_Ret GetGForceData(GF_Data &gForceData);
 
     ///
     /// Checks if a specified gesture is received.
@@ -117,7 +117,7 @@ class GForceAdapter {
     bool GotGesture(GF_Gesture gesture);
 
     // Helper function for converting a quaternion to a Euler angle
-    static GF_Ret QuaternionToEuler(const GF_Quaternion *quat, GF_Euler *euler);
+    static GF_Ret QuaternionToEuler(const GF_Quaternion &quat, GF_Euler &euler);
 
   private:
     GForceAdapterPrivate *m_impl;

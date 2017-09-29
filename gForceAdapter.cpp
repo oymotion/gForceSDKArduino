@@ -161,8 +161,8 @@ GF_Ret GForceAdapterPrivate::GetGForceData(GF_Data *gForceData) {
 ////////////public function in class gForceAdapter
 GF_Ret GForceAdapter::Init(void) { return m_impl->Init(); }
 
-GF_Ret GForceAdapter::GetGForceData(GF_Data *gForceData) {
-    return m_impl->GetGForceData(gForceData);
+GF_Ret GForceAdapter::GetGForceData(GF_Data &gForceData) {
+    return m_impl->GetGForceData(&gForceData);
 }
 
 bool GForceAdapter::GotGesture(GF_Gesture gesture) {
@@ -192,29 +192,27 @@ GForceAdapter::GForceAdapter(int comNum) {
     m_impl = new GForceAdapterPrivate(serial[comNum]);
 }
 
-GForceAdapter::GForceAdapter(HardwareSerial *serial) {
-    m_impl = new GForceAdapterPrivate(serial);
+GForceAdapter::GForceAdapter(HardwareSerial &serial) {
+    m_impl = new GForceAdapterPrivate(&serial);
 }
 
-GF_Ret GForceAdapter::QuaternionToEuler(const GF_Quaternion *quat,
-                                        GF_Euler *           euler) {
-    if ((NULL == quat) || (NULL == euler)) {
-        return ERR_PARAM;
-    }
-    double test = quat->y * quat->z + quat->x * quat->w;
+GF_Ret GForceAdapter::QuaternionToEuler(const GF_Quaternion &quat,
+                                        GF_Euler &           euler) {
+   
+    double test = quat.y * quat.z + quat.x * quat.w;
     if (abs(test) > 0.4999f) {
         int symbol   = (test > 0.4999f) ? 1 : -1;
-        euler->yaw   = symbol * 2 * atan2f(quat->y, quat->w) * 180 / M_PI;
-        euler->pitch = symbol * 90.f;
-        euler->roll  = 0.f;
+        euler.yaw   = symbol * 2 * atan2f(quat.y, quat.w) * 180 / M_PI;
+        euler.pitch = symbol * 90.f;
+        euler.roll  = 0.f;
         return OK;
     }
-    euler->yaw = atan2f((2 * quat->z * quat->w - 2 * quat->x * quat->y),
-                        (1 - 2 * quat->x * quat->x - 2 * quat->z * quat->z)) *
+    euler.yaw = atan2f((2 * quat.z * quat.w - 2 * quat.x * quat.y),
+                        (1 - 2 * quat.x * quat.x - 2 * quat.z * quat.z)) *
                  180 / M_PI;
-    euler->pitch = (float)asin(2 * test) * 180 / M_PI;
-    euler->roll  = atan2f((2 * quat->y * quat->w - 2 * quat->x * quat->z),
-                         (1 - 2 * quat->x * quat->x - 2 * quat->y * quat->y)) *
+    euler.pitch = (float)asin(2 * test) * 180 / M_PI;
+    euler.roll  = atan2f((2 * quat.y * quat.w - 2 * quat.x * quat.z),
+                         (1 - 2 * quat.x * quat.x - 2 * quat.y * quat.y)) *
                   180 / M_PI;
     return OK;
 }
