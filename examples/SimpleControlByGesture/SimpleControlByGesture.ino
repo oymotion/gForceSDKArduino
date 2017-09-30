@@ -36,7 +36,7 @@
 #define GFORCE_PINCH_PIN 6
 #define GFORCE_SHOOT_PIN 7
 
-GForceAdapter gforce = GForceAdapter(&Serial);
+GForceAdapter gforce = GForceAdapter(Serial);
 
 void setup() {
     // set pin mode to output
@@ -54,12 +54,12 @@ void setup() {
     digitalWrite(GFORCE_WAVEOUT_PIN, LOW);
     digitalWrite(GFORCE_PINCH_PIN, LOW);
     digitalWrite(GFORCE_SHOOT_PIN, LOW);
-    gforce.Init();
+    gforce.begin();
 }
 
 void loop() {
     GF_Data gForceData;
-    if (OK == gforce.GetGForceData(&gForceData)) {
+    if (OK == gforce.getGForceData(gForceData)) {
 
         GF_Gesture gesture;
         switch (gForceData.type) {

@@ -51,9 +51,9 @@ class GForceAdapterPrivate {
     GForceAdapterPrivate(HardwareSerial *serial) : m_serial(serial) {}
     ~GForceAdapterPrivate() {}
 
-    GF_Ret Init(void);
-    GF_Ret GetGForceData(GF_Data *gForceData);
-    bool GotGesture(GF_Gesture gesture);
+    GF_Ret init(void);
+    GF_Ret getGForceData(GF_Data *gForceData);
+    bool gotGesture(GF_Gesture gesture);
 
   private:
     const long      m_baudrate = 115200;
@@ -63,16 +63,16 @@ class GForceAdapterPrivate {
     bool            m_releaseFlag;
 };
 
-GF_Ret GForceAdapterPrivate::Init(void) {
+GF_Ret GForceAdapterPrivate::init(void) {
     m_serial->begin(m_baudrate);
     m_serial->setTimeout(5);
     m_exitGestureFlag = false;
     return OK;
 }
 
-bool GForceAdapterPrivate::GotGesture(GF_Gesture gesture) {
+bool GForceAdapterPrivate::gotGesture(GF_Gesture gesture) {
     GF_Data recData;
-    if ((OK == GetGForceData(&recData)) && (recData.type == GF_Data::GESTURE)) {
+    if ((OK == getGForceData(&recData)) && (recData.type == GF_Data::GESTURE)) {
         if (recData.value.gesture == GF_RELEASE) {
             return false;
         }
@@ -94,7 +94,7 @@ bool GForceAdapterPrivate::GotGesture(GF_Gesture gesture) {
     }
 }
 
-GF_Ret GForceAdapterPrivate::GetGForceData(GF_Data *gForceData) {
+GF_Ret GForceAdapterPrivate::getGForceData(GF_Data *gForceData) {
     if (NULL == gForceData) {
         return ERR_PARAM;
     }
@@ -159,14 +159,14 @@ GF_Ret GForceAdapterPrivate::GetGForceData(GF_Data *gForceData) {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 ////////////public function in class gForceAdapter
-GF_Ret GForceAdapter::Init(void) { return m_impl->Init(); }
+GF_Ret GForceAdapter::begin(void) { return m_impl->init(); }
 
-GF_Ret GForceAdapter::GetGForceData(GF_Data &gForceData) {
-    return m_impl->GetGForceData(&gForceData);
+GF_Ret GForceAdapter::getGForceData(GF_Data &gForceData) {
+    return m_impl->getGForceData(&gForceData);
 }
 
-bool GForceAdapter::GotGesture(GF_Gesture gesture) {
-    return m_impl->GotGesture(gesture);
+bool GForceAdapter::gotGesture(GF_Gesture gesture) {
+    return m_impl->gotGesture(gesture);
 }
 
 GForceAdapter::GForceAdapter(int comNum) {

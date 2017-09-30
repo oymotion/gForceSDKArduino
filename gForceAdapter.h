@@ -98,7 +98,7 @@ class GForceAdapter {
     /// Brief Sets up the serial line connection. This function shall be called
     /// prior to GetForceData.
     ///
-    GF_Ret Init(void);
+    GF_Ret begin(void);
 
     ///
     /// Reads one gForce package data from the serial line and outputs to
@@ -106,7 +106,7 @@ class GForceAdapter {
     ///
     /// \param[out] gForceData The GF_Data structure to store gForceData.
     /// \return
-    GF_Ret GetGForceData(GF_Data &gForceData);
+    GF_Ret getGForceData(GF_Data &gForceData);
 
     ///
     /// Checks if a specified gesture is received.
@@ -114,7 +114,7 @@ class GForceAdapter {
     ///
     /// \param[in] gesture The specified gesture to check
     /// \return true if the specified gesture is received; otherwise false
-    bool GotGesture(GF_Gesture gesture);
+    bool gotGesture(GF_Gesture gesture);
 
     // Helper function for converting a quaternion to a Euler angle
     static GF_Ret QuaternionToEuler(const GF_Quaternion &quat, GF_Euler &euler);
