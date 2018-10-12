@@ -54,6 +54,6 @@ to the Arduino board over UART.
    quaternion data. Quaternion data packages may be dropped in this situation.
    If you meet such a problem,  you may have to use a hardware UART instead.
 
-[gForceEmbeddedSuite]: https://oymotion.github.io/doc/gForce100EmbeddedSuiteUserGuide/
-[gForceArmband]: https://oymotion.github.io/doc/gForce100UserGuide/
+[gForceEmbeddedSuite]: https://oymotion.github.io/gForceEmbeddedSuit/gForce100EmbeddedSuiteUserGuide/
+[gForceArmband]: https://oymotion.github.io/gForce100/gForce100UserGuide/
 [GuideToPerformingGestures]: https://www.youtube.com/watch?v=wBsYJf0wrkk  
