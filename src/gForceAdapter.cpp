@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2017, OYMotion Inc.
  *
@@ -30,6 +31,13 @@
 
 #include "gForceAdapter.h"
 #include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#ifndef NULL
+#define NULL ((void*)0)
+#endif
+
 
 // Magic number
 #define MAGNUM_LOW ((unsigned char)0xFF)
@@ -48,31 +56,33 @@ enum {
 
 class GForceAdapterPrivate {
   public:
-    GForceAdapterPrivate(HardwareSerial *serial) : m_serial(serial) {}
+    //GForceAdapterPrivate(HardwareSerial *serial) : m_serial(serial) {}
+    GForceAdapterPrivate(FUNC_GET_SERIAL_DATA getCharFunc , FUNC_GET_MILLIS getTimerFunc) 
+    {
+        m_getCharFunc = getCharFunc; 
+        m_getTimerFunc = getTimerFunc; 
+    }
     ~GForceAdapterPrivate() {}
 
     GF_Ret Init(void);
-    GF_Ret GetGForceData(GF_Data *gForceData);
-    bool GotGesture(GF_Gesture gesture);
+    GF_Ret GetGForceData(GF_Data *gForceData,unsigned long timeout);
+    bool GotGesture(GF_Gesture gesture,unsigned long timeout);
 
   private:
-    const long      m_baudrate = 115200;
-    HardwareSerial *m_serial;
     GF_Gesture      m_gestureBuf;
     bool            m_exitGestureFlag;
-    bool            m_releaseFlag;
+    FUNC_GET_MILLIS     m_getTimerFunc;
+    FUNC_GET_SERIAL_DATA m_getCharFunc;
 };
 
 GF_Ret GForceAdapterPrivate::Init(void) {
-    m_serial->begin(m_baudrate);
-    m_serial->setTimeout(5);
     m_exitGestureFlag = false;
     return OK;
 }
 
-bool GForceAdapterPrivate::GotGesture(GF_Gesture gesture) {
+bool GForceAdapterPrivate::GotGesture(GF_Gesture gesture,unsigned long timeout) {
     GF_Data recData;
-    if ((OK == GetGForceData(&recData)) && (recData.type == GF_Data::GESTURE)) {
+    if ((OK == GetGForceData((&recData),timeout)) && (recData.type == GF_Data::GESTURE)) {
         if (recData.value.gesture == GF_RELEASE) {
             return false;
         }
@@ -94,7 +104,7 @@ bool GForceAdapterPrivate::GotGesture(GF_Gesture gesture) {
     }
 }
 
-GF_Ret GForceAdapterPrivate::GetGForceData(GF_Data *gForceData) {
+GF_Ret GForceAdapterPrivate::GetGForceData(GF_Data *gForceData, unsigned long timeout) {
     if (NULL == gForceData) {
         return ERR_PARAM;
     }
@@ -102,16 +112,26 @@ GF_Ret GForceAdapterPrivate::GetGForceData(GF_Data *gForceData) {
     int  i = GFORCE_MAGNUM_LOW_INDEX;
     bool hasPackageId;    // package id exists?
     int  dataPkgLen = -1; // length of package data
-    char readData;
-    while (true) {
-        // Read one byte from the serial line
-        int readLen = m_serial->readBytes(&readData, 1);
-        if (1 != readLen) {
+    unsigned char readData;
+    unsigned long time ;
+    unsigned long int newtime = m_getTimerFunc();
+
+    while (true) {       
+        if (!m_getCharFunc)
             return ERR_DATA;
+        
+        int readLen;
+        // Read one byte from the serial line
+        while ((readLen = m_getCharFunc(&readData)) == 0)
+        {
+          if((m_getTimerFunc() - newtime) > timeout) 
+          {
+             return TIME_OUT;
+          }              
         }
-
+        
         unsigned char tempByte = (unsigned char)readData;
-
+        
         if (i == GFORCE_MAGNUM_LOW_INDEX) {
             if (tempByte != MAGNUM_LOW) {
                 continue;
@@ -130,7 +150,8 @@ GF_Ret GForceAdapterPrivate::GetGForceData(GF_Data *gForceData) {
                 --dataPkgLen;
             }
             if ((GF_Data::QUATERNION == gForceData->type && dataPkgLen != 16) ||
-                (GF_Data::GESTURE == gForceData->type && dataPkgLen != 1)) {
+                (GF_Data::GESTURE == gForceData->type && dataPkgLen != 1)||
+				(GF_Data::EMGRAW == gForceData->type && dataPkgLen != 16)) {
                 return ERR_DATA;
             }
         } else {
@@ -161,43 +182,21 @@ GF_Ret GForceAdapterPrivate::GetGForceData(GF_Data *gForceData) {
 ////////////public function in class gForceAdapter
 GF_Ret GForceAdapter::Init(void) { return m_impl->Init(); }
 
-GF_Ret GForceAdapter::GetGForceData(GF_Data *gForceData) {
-    return m_impl->GetGForceData(gForceData);
+GF_Ret GForceAdapter::GetGForceData(GF_Data *gForceData,unsigned long timeout) {
+    return m_impl->GetGForceData(gForceData, timeout);
 }
 
-bool GForceAdapter::GotGesture(GF_Gesture gesture) {
-    return m_impl->GotGesture(gesture);
+bool GForceAdapter::GotGesture(GF_Gesture gesture,unsigned long timeout) {
+    return m_impl->GotGesture(gesture,timeout);
 }
 
-GForceAdapter::GForceAdapter(int comNum) {
-    HardwareSerial *serial[4];
-#if defined(HAVE_HWSERIAL0)
-    serial[0] = &Serial;
-#endif
-#if defined(HAVE_HWSERIAL1)
-    serial[1] = &Serial1;
-#else
-    serial[1] = &Serial;
-#endif
-#if defined(HAVE_HWSERIAL2)
-    serial[2] = &Serial2;
-#else
-    serial[2] = &Serial;
-#endif
-#if defined(HAVE_HWSERIAL3)
-    serial[3] = &Serial3;
-#else
-    serial[3] = &Serial;
-#endif
-    m_impl = new GForceAdapterPrivate(serial[comNum]);
-}
 
-GForceAdapter::GForceAdapter(HardwareSerial *serial) {
-    m_impl = new GForceAdapterPrivate(serial);
+GForceAdapter::GForceAdapter(FUNC_GET_SERIAL_DATA getCharFunc, FUNC_GET_MILLIS getTimerFunc) {
+    m_impl = new GForceAdapterPrivate(getCharFunc, getTimerFunc);
 }
 
 GF_Ret GForceAdapter::QuaternionToEuler(const GF_Quaternion *quat,
-                                        GF_Euler *           euler) {
+                                        GF_Euler            *euler) {
     if ((NULL == quat) || (NULL == euler)) {
         return ERR_PARAM;
     }

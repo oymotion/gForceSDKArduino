@@ -27,7 +27,8 @@
  * DAMAGE.
  *
  */
-#include <gForceAdapter.h>
+#include <Arduino.h>
+#include <gForceAdapterC.h>
 
 #define GFORCE_FIST_PIN 2
 #define GFORCE_SPREAD_PIN 3
@@ -35,8 +36,27 @@
 #define GFORCE_WAVEOUT_PIN 5
 #define GFORCE_PINCH_PIN 6
 #define GFORCE_SHOOT_PIN 7
+#define Timeout 1000
 
-GForceAdapter gforce = GForceAdapter(&Serial);
+#define gforceSerial Serial2
+
+/* returns char count */
+int getChar(unsigned char *data)
+{
+    int ret = gforceSerial.read();
+    
+    if (ret == -1)
+        return 0;
+    
+    *data = (unsigned char)ret;
+    
+    return 1;
+}
+/* returns System time */
+unsigned long int getMillis(void)
+{
+    return millis();
+}
 
 void setup() {
     // set pin mode to output
@@ -54,19 +74,27 @@ void setup() {
     digitalWrite(GFORCE_WAVEOUT_PIN, LOW);
     digitalWrite(GFORCE_PINCH_PIN, LOW);
     digitalWrite(GFORCE_SHOOT_PIN, LOW);
-    gforce.Init();
+    //gforce.Init();
+    Serial.begin(115200);
+	  gforceSerial.begin(115200);
 }
 
 void loop() {
-    GF_Data gForceData;
-    if (OK == gforce.GetGForceData(&gForceData)) {
+    struct GF_Data gForceData;
+    struct GF_Euler Euler;
+    
+	if (OK == GFC_GetgForcedata((&gForceData), Timeout)) {
 
         GF_Gesture gesture;
-        switch (gForceData.type) {
+        
+		switch (gForceData.type) {
         case GF_Data::QUATERNION:
+            GFC_GetQuaternionToEuler(&(gForceData.value.quaternion), &Euler);
+
             break;
         case GF_Data::GESTURE:
             gesture = gForceData.value.gesture;
+
             if (gesture == GF_FIST) {
                 digitalWrite(GFORCE_FIST_PIN, HIGH);
             } else if (gesture == GF_SPREAD) {

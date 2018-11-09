@@ -28,59 +28,19 @@
  *
  */
 
+
 #ifndef GFORCEADAPTER_H
 #define GFORCEADAPTER_H
 
-#if defined(ARDUINO) && ARDUINO >= 100
-#include "Arduino.h"
-#else
-#include "WProgram.h"
-#endif
+//#if defined(ARDUINO) && ARDUINO >= 100
+//#include "Arduino.h"
+//#else
+//#include "WProgram.h"
+//#endif
 
-////////////////////////////////////////////////////
-// Function returns
-enum GF_Ret { OK = 0, ERR_PARAM = -1, ERR_SERIAL = -2, ERR_DATA = -3 };
+#include "gForceDataTypes.h"
+#include "math.h"
 
-// Type and constants for gestures
-enum GF_Gesture {
-    GF_RELEASE,
-    GF_FIST,
-    GF_SPREAD,
-    GF_WAVEIN,
-    GF_WAVEOUT,
-    GF_PINCH,
-    GF_SHOOT,
-    GF_UNKNOWN = -1
-};
-
-// Definitions of Quaternion and Euler Angle
-struct GF_Quaternion {
-    float w;
-    float x;
-    float y;
-    float z;
-};
-
-struct GF_Euler {
-    float pitch;
-    float roll;
-    float yaw;
-};
-
-// Definition of gForce package data
-struct GF_Data {
-    // message type
-    enum Type {
-        QUATERNION = 0x02,
-        GESTURE    = 0x0F,
-    };
-
-    Type type;
-    union {
-        GF_Quaternion quaternion;
-        GF_Gesture    gesture;
-    } value;
-};
 
 // It is only used in single thread
 class GForceAdapterPrivate;
@@ -90,8 +50,10 @@ class GForceAdapterPrivate;
 ///
 class GForceAdapter {
   public:
-    GForceAdapter(int comNum = 0);
-    GForceAdapter(HardwareSerial *serial);
+    //GForceAdapter(int comNum = 0);
+    //GForceAdapter(HardwareSerial *serial);
+    GForceAdapter(FUNC_GET_SERIAL_DATA getCharFunc, FUNC_GET_MILLIS getTimerFunc);
+
     ~GForceAdapter() {}
 
     ///
@@ -106,7 +68,7 @@ class GForceAdapter {
     ///
     /// \param[out] gForceData The GF_Data structure to store gForceData.
     /// \return
-    GF_Ret GetGForceData(GF_Data *gForceData);
+    GF_Ret GetGForceData(GF_Data *gForceData, unsigned long timeout);
 
     ///
     /// Checks if a specified gesture is received.
@@ -114,7 +76,7 @@ class GForceAdapter {
     ///
     /// \param[in] gesture The specified gesture to check
     /// \return true if the specified gesture is received; otherwise false
-    bool GotGesture(GF_Gesture gesture);
+    bool GotGesture(GF_Gesture gesture, unsigned long timeout);
 
     // Helper function for converting a quaternion to a Euler angle
     static GF_Ret QuaternionToEuler(const GF_Quaternion *quat, GF_Euler *euler);
