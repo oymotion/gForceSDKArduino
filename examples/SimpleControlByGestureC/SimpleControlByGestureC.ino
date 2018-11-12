@@ -91,9 +91,7 @@ void loop() {
       
         case GF_Data::QUATERNION:
         
-            GFC_GetQuaternionToEuler(&(gForceData.value.quaternion), &Euler);
-            printf("%f   ",Euler.yaw);
-            printf("%f   \n",Euler.roll);
+            GFC_QuaternionToEuler(&(gForceData.value.quaternion), &Euler);
             break;
             
         case GF_Data::GESTURE:
