@@ -83,7 +83,7 @@ void loop() {
     struct GF_Data gForceData;
     struct GF_Euler Euler;
     
-    if (OK == GFC_GetgForcedata((&gForceData), Timeout)) {
+    if (OK == GFC_gForcedata((&gForceData), Timeout)) {
 
     GF_Gesture gesture;
         
@@ -92,8 +92,7 @@ void loop() {
         case GF_Data::QUATERNION:
         
             GFC_GetQuaternionToEuler(&(gForceData.value.quaternion), &Euler);
-            printf("%f   ",Euler.yaw);
-            printf("%f   \n",Euler.roll);
+
             break;
             
         case GF_Data::GESTURE:
