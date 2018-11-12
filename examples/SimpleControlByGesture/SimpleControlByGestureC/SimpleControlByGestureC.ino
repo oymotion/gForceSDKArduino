@@ -83,7 +83,7 @@ void loop() {
     struct GF_Data gForceData;
     struct GF_Euler Euler;
     
-	if (OK == GFC_GetgForcedata((&gForceData), Timeout)) {
+    if (OK == GFC_GetgForcedata((&gForceData), Timeout)) {
 
     GF_Gesture gesture;
         
