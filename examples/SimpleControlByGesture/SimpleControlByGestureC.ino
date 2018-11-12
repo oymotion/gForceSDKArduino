@@ -85,14 +85,19 @@ void loop() {
     
 	if (OK == GFC_GetgForcedata((&gForceData), Timeout)) {
 
-        GF_Gesture gesture;
+    GF_Gesture gesture;
         
-		switch (gForceData.type) {
+    switch (gForceData.type) {
+      
         case GF_Data::QUATERNION:
+        
             GFC_GetQuaternionToEuler(&(gForceData.value.quaternion), &Euler);
-
+            printf("%f   ",Euler.yaw);
+            printf("%f   \n",Euler.roll);
             break;
+            
         case GF_Data::GESTURE:
+        
             gesture = gForceData.value.gesture;
 
             if (gesture == GF_FIST) {

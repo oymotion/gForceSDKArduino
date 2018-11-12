@@ -13,9 +13,9 @@ to the Arduino board over UART.
 ## Usage
 1. Importing the gForce SDK for Arduino
 
-    `zip` all files of this source code into a package file, say `gForce.zip`.
+    `zip` all files of this source code into a package file, say `gForceSDKArduino.zip`.
     Open the Arduino IDE, select `Sketch -> Include Library -> Add .ZIP library`,
-    and then select `gForce.zip`.
+    and then select `gForceSDKArduino.zip`.
 
 2. Opening and running the example code
 
@@ -28,7 +28,7 @@ to the Arduino board over UART.
     * Wire the gForceJoint to the Arduino board, and then turn on the Arduino 
       board after connecting it to your development PC with Arduino IDE.
 
-    * In the Arduino IDE, select `File -> Example -> gForce -> SimpleControlByGesture`
+    * In the Arduino IDE, select `File -> Example -> gForce -> SimpleControlByGestureC`
       to open the the example code. Modify the code if needed, then build,
       download and run it.
 
