@@ -10,14 +10,25 @@ A gForce Embedded Suite includes a gForce Armband and a gForceJoint.
 The gForceJoint is a hardware module that bridges the gForce armband over BLE 
 to the Arduino board over UART.
 
-## Usage
-1. Importing the gForce SDK for Arduino
+## Usage  
+1. Download method  
+	First you need to download the files from the library:  
+	
+	$ git clone git@github.com:oymotion/gForceSDKArduino.git  
+	
+	Then download all the submodule files:  
+	
+	$ git submodule foreach git pull  
+	
+	Complete these two steps to obtain the complete project documentation  
+
+2. Importing the gForce SDK for Arduino
 
     `zip` all files of this source code into a package file, say `gForceSDKArduino.zip`.
     Open the Arduino IDE, select `Sketch -> Include Library -> Add .ZIP library`,
     and then select `gForceSDKArduino.zip`.
 
-2. Opening and running the example code
+3. Opening and running the example code
 
     The example code maps six Arduino GPIO pins to six gestures. A GPIO pin
     will output high when its corresponding gesture from gForce armband is
