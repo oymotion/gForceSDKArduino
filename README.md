@@ -20,7 +20,9 @@ to the Arduino board over UART.
 	
 	$ git submodule foreach git pull  
 	
-	Complete these two steps to obtain the complete project documentation  
+	Complete these two steps to obtain the complete project documentation,The submodule should be located 
+	"gForceSDKArduino" -> "src" ,including 'gForceSDKEmbedded.git' all files,if no,
+	Please download and add 'gForceSDKEmbedded.git' to the above location  by yourself.  
 
 2. Importing the gForce SDK for Arduino
 
