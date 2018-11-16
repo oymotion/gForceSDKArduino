@@ -12,6 +12,8 @@ to the Arduino board over UART.
 
 ## Usage  
 1. Download method  
+	If you have git:  
+	
 	First you need to download the files from the library:  
 	
 	`$ git clone git@github.com:oymotion/gForceSDKArduino.git`  
@@ -23,6 +25,12 @@ to the Arduino board over UART.
 	Complete these two steps to obtain the complete project documentation,The submodule should be located 
 	`gForceSDKArduino -> src ` ,including ` gForceSDKEmbedded.git ` all files,if no,
 	Please download and add ` gForceSDKEmbedded.git ` to the above location  by yourself.  
+	
+	If you no have git :  
+	
+	First enter the oymotion/gForceSDKArduino.git , Click the ` Clone or download ` to download the  gForceSDKArduino.zip;
+	Then enter the oymotion/gForceSDKEmbedded.git , Click the ` Clone or download ` to download the  gForceSDKEmbedded.zip;
+	After decompression,add all the files inside gForceSDKEmbedded. Zip to `gForceSDKArduino -> src `.  
 
 2. Importing the gForce SDK for Arduino
 
