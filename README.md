@@ -14,15 +14,15 @@ to the Arduino board over UART.
 1. Download method  
 	First you need to download the files from the library:  
 	
-	$ git clone git@github.com:oymotion/gForceSDKArduino.git  
+	`$ git clone git@github.com:oymotion/gForceSDKArduino.git`  
 	
 	Then download all the submodule files:  
 	
-	$ git submodule foreach git pull  
+	`$ git submodule foreach git pull`  
 	
 	Complete these two steps to obtain the complete project documentation,The submodule should be located 
-	"gForceSDKArduino" -> "src" ,including 'gForceSDKEmbedded.git' all files,if no,
-	Please download and add 'gForceSDKEmbedded.git' to the above location  by yourself.  
+	`gForceSDKArduino -> src ` ,including ` gForceSDKEmbedded.git ` all files,if no,
+	Please download and add ` gForceSDKEmbedded.git ` to the above location  by yourself.  
 
 2. Importing the gForce SDK for Arduino
 
