@@ -74,7 +74,7 @@ void setup() {
     digitalWrite(GFORCE_WAVEOUT_PIN, LOW);
     digitalWrite(GFORCE_PINCH_PIN, LOW);
     digitalWrite(GFORCE_SHOOT_PIN, LOW);
-    //gforce.Init();
+    
     Serial.begin(115200);
 	  gforceSerial.begin(115200);
 }
@@ -83,7 +83,7 @@ void loop() {
     struct GF_Data gForceData;
     struct GF_Euler Euler;
     
-    if (OK == GFC_gForcedata((&gForceData), Timeout)) {
+    if (OK == GFC_GetgForcedata((&gForceData), Timeout)) {
 
     GF_Gesture gesture;
         
@@ -91,12 +91,8 @@ void loop() {
       
         case GF_Data::QUATERNION:
         
-<<<<<<< HEAD
-            GFC_QuaternionToEuler(&(gForceData.value.quaternion), &Euler);
-=======
             GFC_GetQuaternionToEuler(&(gForceData.value.quaternion), &Euler);
 
->>>>>>> 3eb24b78f23207768ce9a2735659369c4f07fdce
             break;
             
         case GF_Data::GESTURE:
