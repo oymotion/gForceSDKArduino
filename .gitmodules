@@ -1,0 +1,3 @@
+[submodule "gForceSDKEmbedded"]
+	path = gForceSDKEmbedded
+	url = https://github.com/oymotion/gForceSDKEmbedded.git
