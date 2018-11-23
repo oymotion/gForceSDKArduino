@@ -18,25 +18,12 @@ to the Arduino board over UART.
 
     `$ git clone git@github.com:oymotion/gForceSDKArduino.git`  
 
-    Then download all the submodule files:  
-
-    `$ git submodule update --init`  
-
-    Complete these two steps to obtain the complete project documentation,The submodule should be located 
-    `gForceSDKArduino -> src ` ,including ` gForceSDKEmbedded.git ` all files,if no,
-    Please download and add ` gForceSDKEmbedded.git ` to the above location  by yourself.  
-
-    If you don't have git :  
-
-    First enter the oymotion/gForceSDKArduino.git , Click the ` Clone or download ` to download the  gForceSDKArduino.zip;
-    Then enter the oymotion/gForceSDKEmbedded.git , Click the ` Clone or download ` to download the  gForceSDKEmbedded.zip;
-    Depress gForceSDKEmbedded.zip and add all the files decompressed into `gForceSDKArduino -> src `.  
+    If you don't have git, you can choose download zip file form github.  
 
 2. Importing the gForce SDK for Arduino
 
-    `zip` all files of this source code into a package file, say `gForceSDKArduino.zip`.
     Open the Arduino IDE, select `Sketch -> Include Library -> Add .ZIP library`,
-    and then select `gForceSDKArduino.zip`.
+    and then select the directory you clone the project or the zip file you just downloaded.
 
 3. Opening and running the example code
 
@@ -49,7 +36,7 @@ to the Arduino board over UART.
     * Wire the gForceJoint to the Arduino board, and then turn on the Arduino 
       board after connecting it to your development PC with Arduino IDE.
 
-    * In the Arduino IDE, select `File -> Example -> gForce -> SimpleControlByGestureC`
+    * In the Arduino IDE, select `File -> Example -> gForceSDKArduino -> SimpleControlByGestureC`
       to open the the example code. Modify the code if needed, then build,
       download and run it.
 
