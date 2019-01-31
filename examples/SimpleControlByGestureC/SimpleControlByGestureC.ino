@@ -89,8 +89,9 @@ void loop()
 {
   struct GF_Data gForceData;
   struct GF_Euler Euler;
+  GF_Ret ret = GFC_GetgForcedata((&gForceData), Timeout);
 
-  if (OK == GFC_GetgForcedata((&gForceData), Timeout))
+  if (OK == ret)
   {
     GF_Gesture gesture;
 
@@ -157,5 +158,10 @@ void loop()
     default:
       break;
     }
+  }
+  else
+  {
+    Serial.print("GFC_GetgForcedata() returned: ");
+    Serial.println(ret);
   }
 }

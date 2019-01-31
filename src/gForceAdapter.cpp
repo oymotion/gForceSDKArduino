@@ -225,12 +225,12 @@ GF_Ret GForceAdapterPrivate::GetGForceData(GF_Data *gForceData, unsigned long ti
       else
       {
         *((unsigned char *)&gForceData->value + i - GFORCE_HEADER_LEN) = tempByte;
-
-        dataPkgLen--;
-
-        if (dataPkgLen == 0)
-          break;
       }
+
+      dataPkgLen--;
+
+      if (dataPkgLen == 0)
+        break;
     }
 
     i++;
