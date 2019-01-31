@@ -5,17 +5,17 @@
 #######################################
 # Datatypes (KEYWORD1)
 #######################################
-gForceAdapterC	KEYWORD1
-getChar	KEYWORD1
-getMillis	KEYWORD1
-#######################################
-# Methods and Functions (KEYWORD2)
-#######################################
 GF_Data	KEYWORD2
 GF_Euler	KEYWORD2
 GF_Gesture	KEYWORD2
 GF_Quaternion	KEYWORD2
 GF_Emgraw	KEYWORD2
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+gForceAdapterC	KEYWORD1
+getChar	KEYWORD1
+HAL_GetTick	KEYWORD1
 #######################################
 # Constants (LITERAL1)
 #######################################

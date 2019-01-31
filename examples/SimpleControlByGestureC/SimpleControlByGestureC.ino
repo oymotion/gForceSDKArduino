@@ -43,92 +43,119 @@
 /* returns char count */
 int getChar(unsigned char *data)
 {
-    int ret = gforceSerial.read();
-    
-    if (ret == -1)
-        return 0;
-    
-    *data = (unsigned char)ret;
-    
-    return 1;
+  int ret = gforceSerial.read();
+
+  if (ret == -1)
+    return 0;
+
+  *data = (unsigned char)ret;
+
+  return 1;
 }
+
+
 /* returns System time */
-unsigned long int getMillis(void)
+unsigned long HAL_GetTick(void)
 {
-    return millis();
+  return millis();
 }
 
-void setup() {
-    // set pin mode to output
-    pinMode(GFORCE_FIST_PIN, OUTPUT);
-    pinMode(GFORCE_SPREAD_PIN, OUTPUT);
-    pinMode(GFORCE_WAVEIN_PIN, OUTPUT);
-    pinMode(GFORCE_WAVEOUT_PIN, OUTPUT);
-    pinMode(GFORCE_PINCH_PIN, OUTPUT);
-    pinMode(GFORCE_SHOOT_PIN, OUTPUT);
 
-    // default set output low
-    digitalWrite(GFORCE_FIST_PIN, LOW);
-    digitalWrite(GFORCE_SPREAD_PIN, LOW);
-    digitalWrite(GFORCE_WAVEIN_PIN, LOW);
-    digitalWrite(GFORCE_WAVEOUT_PIN, LOW);
-    digitalWrite(GFORCE_PINCH_PIN, LOW);
-    digitalWrite(GFORCE_SHOOT_PIN, LOW);
-    
-    Serial.begin(115200);
-	  gforceSerial.begin(115200);
+void setup()
+{
+  // set pin mode to output
+  pinMode(GFORCE_FIST_PIN, OUTPUT);
+  pinMode(GFORCE_SPREAD_PIN, OUTPUT);
+  pinMode(GFORCE_WAVEIN_PIN, OUTPUT);
+  pinMode(GFORCE_WAVEOUT_PIN, OUTPUT);
+  pinMode(GFORCE_PINCH_PIN, OUTPUT);
+  pinMode(GFORCE_SHOOT_PIN, OUTPUT);
+
+  // default set output low
+  digitalWrite(GFORCE_FIST_PIN, LOW);
+  digitalWrite(GFORCE_SPREAD_PIN, LOW);
+  digitalWrite(GFORCE_WAVEIN_PIN, LOW);
+  digitalWrite(GFORCE_WAVEOUT_PIN, LOW);
+  digitalWrite(GFORCE_PINCH_PIN, LOW);
+  digitalWrite(GFORCE_SHOOT_PIN, LOW);
+
+  Serial.begin(115200);
+  gforceSerial.begin(115200);
 }
 
-void loop() {
-    struct GF_Data gForceData;
-    struct GF_Euler Euler;
-    
-    if (OK == GFC_GetgForcedata((&gForceData), Timeout)) {
 
+
+void loop()
+{
+  struct GF_Data gForceData;
+  struct GF_Euler Euler;
+
+  if (OK == GFC_GetgForcedata((&gForceData), Timeout))
+  {
     GF_Gesture gesture;
-        
-    switch (gForceData.type) {
-      
-        case GF_Data::QUATERNION:
-        
-            GFC_GetQuaternionToEuler(&(gForceData.value.quaternion), &Euler);
 
-            break;
-            
-        case GF_Data::GESTURE:
-        
-            gesture = gForceData.value.gesture;
+    switch (gForceData.type)
+    {
+    case GF_Data::QUATERNION:
+      GFC_QuaternionToEuler(&(gForceData.value.quaternion), &Euler);
+      // Serial.print("pitch: "); Serial.print(Euler.pitch);
+      // Serial.print(", yaw: "); Serial.print(Euler.yaw);
+      // Serial.print(", roll: "); Serial.print(Euler.roll);
+      // Serial.println();
+      break;
 
-            if (gesture == GF_FIST) {
-                digitalWrite(GFORCE_FIST_PIN, HIGH);
-            } else if (gesture == GF_SPREAD) {
-                digitalWrite(GFORCE_SPREAD_PIN, HIGH);
-            } else if (gesture == GF_WAVEIN) {
-                digitalWrite(GFORCE_WAVEIN_PIN, HIGH);
-            } else if (gesture == GF_WAVEOUT) {
-                digitalWrite(GFORCE_WAVEOUT_PIN, HIGH);
-            } else if (gesture == GF_PINCH) {
-                digitalWrite(GFORCE_PINCH_PIN, HIGH);
-            } else if (gesture == GF_SHOOT) {
-                digitalWrite(GFORCE_SHOOT_PIN, HIGH);
-            } else if (gesture == GF_RELEASE) {
-                digitalWrite(GFORCE_FIST_PIN, LOW);
-                digitalWrite(GFORCE_SPREAD_PIN, LOW);
-                digitalWrite(GFORCE_WAVEIN_PIN, LOW);
-                digitalWrite(GFORCE_WAVEOUT_PIN, LOW);
-                digitalWrite(GFORCE_PINCH_PIN, LOW);
-                digitalWrite(GFORCE_SHOOT_PIN, LOW);
-            } else if (gesture == GF_UNKNOWN) {
-                digitalWrite(GFORCE_FIST_PIN, HIGH);
-                digitalWrite(GFORCE_SPREAD_PIN, HIGH);
-                digitalWrite(GFORCE_WAVEIN_PIN, HIGH);
-                digitalWrite(GFORCE_WAVEOUT_PIN, HIGH);
-                digitalWrite(GFORCE_PINCH_PIN, HIGH);
-                digitalWrite(GFORCE_SHOOT_PIN, HIGH);
-            }
-            break;
-        default:
-            break;
-        }
+    case GF_Data::GESTURE:
+      gesture = gForceData.value.gesture;
+      Serial.print("gesture: ");
+      Serial.println(gesture);
+
+      if (gesture == GF_FIST)
+      {
+        digitalWrite(GFORCE_FIST_PIN, HIGH);
+      }
+      else if (gesture == GF_SPREAD)
+      {
+        digitalWrite(GFORCE_SPREAD_PIN, HIGH);
+      }
+      else if (gesture == GF_WAVEIN)
+      {
+        digitalWrite(GFORCE_WAVEIN_PIN, HIGH);
+      }
+      else if (gesture == GF_WAVEOUT)
+      {
+        digitalWrite(GFORCE_WAVEOUT_PIN, HIGH);
+      }
+      else if (gesture == GF_PINCH)
+      {
+        digitalWrite(GFORCE_PINCH_PIN, HIGH);
+      }
+      else if (gesture == GF_SHOOT)
+      {
+        digitalWrite(GFORCE_SHOOT_PIN, HIGH);
+      }
+      else if (gesture == GF_RELEASE)
+      {
+        digitalWrite(GFORCE_FIST_PIN, LOW);
+        digitalWrite(GFORCE_SPREAD_PIN, LOW);
+        digitalWrite(GFORCE_WAVEIN_PIN, LOW);
+        digitalWrite(GFORCE_WAVEOUT_PIN, LOW);
+        digitalWrite(GFORCE_PINCH_PIN, LOW);
+        digitalWrite(GFORCE_SHOOT_PIN, LOW);
+      }
+      else if (gesture == GF_UNKNOWN)
+      {
+        digitalWrite(GFORCE_FIST_PIN, HIGH);
+        digitalWrite(GFORCE_SPREAD_PIN, HIGH);
+        digitalWrite(GFORCE_WAVEIN_PIN, HIGH);
+        digitalWrite(GFORCE_WAVEOUT_PIN, HIGH);
+        digitalWrite(GFORCE_PINCH_PIN, HIGH);
+        digitalWrite(GFORCE_SHOOT_PIN, HIGH);
+      }
+
+      break;
+
+    default:
+      break;
     }
+  }
 }
