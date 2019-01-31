@@ -44,7 +44,7 @@ static GForceAdapter *_adapter = (GForceAdapter*)NULL;
 static GForceAdapter* getGForceAdapter()
 {
   if (_adapter == NULL)
-    _adapter = new GForceAdapter(getChar, getMillis);
+    _adapter = new GForceAdapter(getChar, HAL_GetTick);
 
   return _adapter;
 }

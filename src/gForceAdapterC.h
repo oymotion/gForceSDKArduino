@@ -30,7 +30,7 @@ extern "C" {
 int getChar(unsigned char *data);
 
 /* Implement me: get system run time */
-unsigned long int getMillis(void);
+uint32_t HAL_GetTick(void);
 
 enum GF_Ret GFC_GetgForcedata(struct GF_Data *gForceData, unsigned long timeout);
 
