@@ -27,10 +27,10 @@ extern "C" {
 
 
 /*  Implement me: get char that usart2 receve from gforcejoint */
-int getChar(unsigned char *data);
+int SYS_GetChar(unsigned char *data);
 
 /* Implement me: get system run time */
-unsigned long HAL_GetTick(void);
+unsigned long SYS_GetTick(void);
 
 enum GF_Ret GFC_GetgForcedata(struct GF_Data *gForceData, unsigned long timeout);
 
