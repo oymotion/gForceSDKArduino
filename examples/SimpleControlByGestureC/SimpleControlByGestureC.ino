@@ -41,7 +41,7 @@
 #define gforceSerial Serial2
 
 /* returns char count */
-int getChar(unsigned char *data)
+int SYS_GetChar(unsigned char *data)
 {
   int ret = gforceSerial.read();
 
@@ -55,7 +55,7 @@ int getChar(unsigned char *data)
 
 
 /* returns System time */
-unsigned long HAL_GetTick(void)
+unsigned long SYS_GetTick(void)
 {
   return millis();
 }
