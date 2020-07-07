@@ -66,22 +66,22 @@ typedef struct
 } SERVO_POS_OFFSET;
 
 const SERVO_POS_OFFSET SERVO_OFFSET[SERVOS_CNT] = {
-    {5, 175, 0},
-    {5, 175, 0},
-    {5, 175, 0},
-    {5, 175, 0},
-    {5, 175, 0},
-    {5, 175, 0}};
+    {30, 170, 0},
+    {50, 160, 0},
+    {50, 160, 0},
+    {50, 160, 0},
+    {50, 160, 0},
+    {50, 160, 0}};
 
 // Pos for thumb, finger, middle, ring, little, wrist
 const int GESTURE[GestureCnt][SERVOS_CNT] = {
-    {170, 170, 170, 170, 170,  90}, // fist
-    { 10,  10,  10,  10,  10,  90}, // spread
-    { 10,  10,  10,  10,  10, 170}, // wave in
-    { 10,  10,  10,  10,  10,  10}, // wave out
-    {170, 170,  10,  10,  10,  90}, // pinch
-    { 10,  10, 170, 170, 170,  90}, // shoot
-    { 40,  40,  40,  40,  40,  90}  // Relax
+    {170,  50,  50,  50,  50,  90}, // fist
+    { 50, 160, 160, 160, 160,  90}, // spread
+    { 50, 160, 160, 160, 160,  50}, // wave in
+    { 50, 160, 160, 160, 160, 160}, // wave out
+    {170,  50, 160, 160, 160,  90}, // ok
+    { 50, 160,  50,  50,  50,  90}, // shoot
+    { 90,  90,  90,  90,  90,  90}  // Relax
 };
 
 unsigned long SYS_GetTick(void);
@@ -149,12 +149,12 @@ void perform_gesture(GestureType gestureIdx)
 
 void setup()
 {
-  servos[0].attach(6);
+  servos[0].attach(3);
   servos[1].attach(5);
-  servos[2].attach(4);
-  servos[3].attach(3);
-  servos[4].attach(2);
-  servos[5].attach(7);
+  servos[2].attach(6);
+  servos[3].attach(9);
+  servos[4].attach(10);
+  servos[5].attach(11);
 
   //  Serial.begin(115200);
   gForceSerial.begin(115200);
@@ -225,15 +225,21 @@ void loop()
         break;
     }
   }
+
 #else
+
   static int i = 0;
+  static uint32_t last_gesture_time; 
 
-  perform_gesture(i);
-  delay(2000);
-
-  if (++i >= GestureCnt)
+  if (millis() - last_gesture_time > 2000)
   {
-    i = 0;
+    perform_gesture(i);
+    last_gesture_time = millis();
+
+    if (++i >= GestureCnt)
+    {
+      i = 0;
+    }
   }
 
 #endif
