@@ -51,7 +51,7 @@ static GForceAdapter* getGForceAdapter()
 
 
 /*  parsing gforcejoint data  */
-enum GF_Ret GFC_GetgForcedata(struct GF_Data *gForceData, unsigned long timeout)
+enum GF_Ret GFC_GetgForceData(struct GF_Data *gForceData, unsigned long timeout)
 {
   return getGForceAdapter()->GetGForceData(gForceData, timeout);
 }

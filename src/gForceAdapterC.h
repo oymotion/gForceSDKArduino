@@ -32,7 +32,7 @@ int SYS_GetChar(unsigned char *data);
 /* Implement me: get system run time */
 unsigned long SYS_GetTick(void);
 
-enum GF_Ret GFC_GetgForcedata(struct GF_Data *gForceData, unsigned long timeout);
+enum GF_Ret GFC_GetgForceData(struct GF_Data *gForceData, unsigned long timeout);
 
 enum GF_Ret GFC_QuaternionToEuler(const struct GF_Quaternion *quat, struct GF_Euler *euler);
 

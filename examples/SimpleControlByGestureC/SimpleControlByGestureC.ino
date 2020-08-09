@@ -38,7 +38,7 @@
 #define GFORCE_SHOOT_PIN 7
 #define Timeout 1000
 
-#define gforceSerial Serial2
+#define gforceSerial Serial
 
 /* returns char count */
 int SYS_GetChar(unsigned char *data)
@@ -89,7 +89,7 @@ void loop()
 {
   struct GF_Data gForceData;
   struct GF_Euler Euler;
-  GF_Ret ret = GFC_GetgForcedata((&gForceData), Timeout);
+  GF_Ret ret = GFC_GetgForceData((&gForceData), Timeout);
 
   if (OK == ret)
   {
@@ -161,7 +161,7 @@ void loop()
   }
   else
   {
-    Serial.print("GFC_GetgForcedata() returned: ");
+    Serial.print("GFC_GetgForceData() returned: ");
     Serial.println(ret);
   }
 }
