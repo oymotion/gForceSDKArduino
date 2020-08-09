@@ -46,9 +46,9 @@ You just have to call them, and they are:
 The following two functions require users to populate themselves based on the platform they use:
 
 ```C
-  //Gets the data received by the serial port;  
-  //*data : Point to the received data;  
-  //return : Returns a byte received data;  
+  // Gets the data received by the serial port
+  // *data : Point to the received data
+  // return : Returns 1 if data got, otherwise 0 
   int SYS_GetChar(unsigned char *data)  
   {  
     int ret = Your_USART_RxData;  
