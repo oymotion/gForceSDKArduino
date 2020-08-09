@@ -11,7 +11,7 @@
 
 ////////////////////////////////////////////////////
 // Function returns
-enum GF_Ret { OK = 0, ERR_PARAM = -1, TIME_OUT = -2, ERR_DATA = -3 };
+enum GF_Ret { GF_RET_OK = 0, GF_RET_ERR_PARAM = -1, GF_RET_TIME_OUT = -2, GF_RET_ERR_DATA = -3 };
 
 // Type and constants for gestures
 enum GF_Gesture

@@ -93,7 +93,7 @@ private:
 GF_Ret GForceAdapterPrivate::Init(void)
 {
   m_exitGestureFlag = false;
-  return OK;
+  return GF_RET_OK;
 }
 
 
@@ -101,7 +101,7 @@ bool GForceAdapterPrivate::GotGesture(GF_Gesture gesture, unsigned long timeout)
 {
   GF_Data recData;
 
-  if ((OK == GetGForceData((&recData), timeout)) && (recData.type == GF_Data::GESTURE))
+  if ((GF_RET_OK == GetGForceData((&recData), timeout)) && (recData.type == GF_Data::GESTURE))
   {
     if (recData.value.gesture == GF_RELEASE)
     {
@@ -139,7 +139,7 @@ GF_Ret GForceAdapterPrivate::GetGForceData(GF_Data *gForceData, unsigned long ti
 {
   if (NULL == gForceData)
   {
-    return ERR_PARAM;
+    return GF_RET_ERR_PARAM;
   }
 
   int  i = GFORCE_MAGNUM_LOW_INDEX;
@@ -151,7 +151,7 @@ GF_Ret GForceAdapterPrivate::GetGForceData(GF_Data *gForceData, unsigned long ti
   while (true)
   {
     if (!m_getCharFunc)
-      return ERR_DATA;
+      return GF_RET_ERR_DATA;
 
     int readLen;
 
@@ -160,7 +160,7 @@ GF_Ret GForceAdapterPrivate::GetGForceData(GF_Data *gForceData, unsigned long ti
     {
       if((unsigned long)(m_getTimerFunc() - startTime) > timeout)
       {
-        return TIME_OUT;
+        return GF_RET_TIME_OUT;
       }
     }
 
@@ -190,7 +190,7 @@ GF_Ret GForceAdapterPrivate::GetGForceData(GF_Data *gForceData, unsigned long ti
           (GF_Data::GESTURE != gForceData->type) &&
           (GF_Data::EMGRAW != gForceData->type))
       {
-        return ERR_DATA;
+        return GF_RET_ERR_DATA;
       }
     }
     else if (i == GFORCE_MSG_LEN_INDEX)
@@ -206,7 +206,7 @@ GF_Ret GForceAdapterPrivate::GetGForceData(GF_Data *gForceData, unsigned long ti
           (GF_Data::GESTURE == gForceData->type && dataPkgLen != 1) ||
           (GF_Data::EMGRAW == gForceData->type && dataPkgLen != 16))
       {
-        return ERR_DATA;
+        return GF_RET_ERR_DATA;
       }
     }
     else
@@ -236,7 +236,7 @@ GF_Ret GForceAdapterPrivate::GetGForceData(GF_Data *gForceData, unsigned long ti
     i++;
   }
 
-  return OK;
+  return GF_RET_OK;
 }
 
 
@@ -271,7 +271,7 @@ GF_Ret GForceAdapter::QuaternionToEuler(const GF_Quaternion *quat,
 {
   if ((NULL == quat) || (NULL == euler))
   {
-    return ERR_PARAM;
+    return GF_RET_ERR_PARAM;
   }
 
   double test = quat->y * quat->z + quat->x * quat->w;
@@ -282,7 +282,7 @@ GF_Ret GForceAdapter::QuaternionToEuler(const GF_Quaternion *quat,
     euler->yaw   = symbol * 2 * atan2f(quat->y, quat->w) * 180 / M_PI;
     euler->pitch = symbol * 90.f;
     euler->roll  = 0.f;
-    return OK;
+    return GF_RET_OK;
   }
 
   euler->yaw = atan2f((2 * quat->z * quat->w - 2 * quat->x * quat->y),
@@ -292,5 +292,5 @@ GF_Ret GForceAdapter::QuaternionToEuler(const GF_Quaternion *quat,
   euler->roll  = atan2f((2 * quat->y * quat->w - 2 * quat->x * quat->z),
                         (1 - 2 * quat->x * quat->x - 2 * quat->y * quat->y)) *
                  180 / M_PI;
-  return OK;
+  return GF_RET_OK;
 }

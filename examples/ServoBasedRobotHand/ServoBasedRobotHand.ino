@@ -174,7 +174,7 @@ void loop()
 #if USE_GFORCE
   GF_Data gForceData;
 
-  if (OK == gforce.GetGForceData(&gForceData, 10))
+  if (GF_RET_OK == gforce.GetGForceData(&gForceData, 10))
   {
     GF_Gesture gesture;
 
