@@ -9,7 +9,12 @@ The gForceJoint is a hardware module that bridges the gForce armband over BLE to
 
 ## Usage
 
-1. Download method
+### 1. Connect gForceJoint with Arduino
+
+See this [document](https://oymotion.github.io/gForceJoint/gForceJoint/).
+
+### 2. Download method
+
     If you have git:
 
     First you need to download the files from the library:
@@ -20,11 +25,11 @@ The gForceJoint is a hardware module that bridges the gForce armband over BLE to
 
     First enter the oymotion/gForceSDKArduino.git , Click the ` Clone or download ` to download the gForceSDKArduino.zip;
 
-2. Importing the gForce SDK for Arduino
+### 3. Importing the gForce SDK for Arduino
 
     Open the Arduino IDE, select `Sketch -> Include Library -> Add .ZIP library`, and then select `gForceSDKArduino.zip`.
 
-3. Opening and running the example code
+### 4. Opening and running the example code
 
     The example code maps six Arduino GPIO pins to six gestures. A GPIO pin will output high when its corresponding gesture from gForce armband is received.
 
@@ -49,6 +54,6 @@ The gForceJoint is a hardware module that bridges the gForce armband over BLE to
 
 1. Some Arduino boards may use GPIO to simulate UART, alleged software UART. This may consume most of the CPU cycles and cause problems with processing quaternion data. Quaternion data packages may be dropped in this situation. If you meet such a problem, you may have to use a hardware UART instead.
 
-[gForceEmbeddedSuite]: https://oymotion.github.io/doc/gForce100EmbeddedSuiteUserGuide/
-[gForceArmband]: https://oymotion.github.io/doc/gForce100UserGuide/
+[gForceJoint]: https://oymotion.github.io/gForceJoint/gForceJoint/
+[gForceArmband]: https://oymotion.github.io/gForce100/gForce100UserGuide/
 [GuideToPerformingGestures]: https://www.youtube.com/watch?v=wBsYJf0wrkk
