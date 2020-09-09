@@ -203,7 +203,7 @@ GF_Ret GForceAdapterPrivate::GetGForceData(GF_Data *gForceData, unsigned long ti
       }
 
       if ((GF_Data::QUATERNION == gForceData->type && dataPkgLen != 16) ||
-          (GF_Data::GESTURE == gForceData->type && dataPkgLen != 1) ||
+          (GF_Data::GESTURE == gForceData->type && dataPkgLen != 1 && dataPkgLen != 5) ||
           (GF_Data::EMGRAW == gForceData->type && dataPkgLen != 16))
       {
         return GF_RET_ERR_DATA;
@@ -221,6 +221,7 @@ GF_Ret GForceAdapterPrivate::GetGForceData(GF_Data *gForceData, unsigned long ti
       if (gForceData->type == GF_Data::GESTURE)
       {
         gForceData->value.gesture = (GF_Gesture)tempByte;
+        break;  /* ignore other bytes */
       }
       else
       {
