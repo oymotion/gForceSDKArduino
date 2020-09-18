@@ -12,12 +12,13 @@ A gForce Embedded Suite includes a gForce Armband and a gForceJoint. The gForceJ
 1. Importing the gForce SDK for Embedded
 
 Download and unzip the library file into your project.
-In the main.c function you need to add `#include "gAorceAdapterC.h"`.
+In the main.c function you need to add `#include "gForceAdapterC.h"`.
 
 2. The API we provide in library
 
 We provide some API interfaces in the library to help you analyze the data of gForce armband.
-You just have to call them, and they are:
+`gForceAdapter.h` and `gForceAdapter.cpp` are files of C++ version, while `gForceAdapterC.h` and `gForceAdapterC.cpp` for wrapped version in C.
+You must add those files into your project, and call the interfaces:
 
 ```C
   //Parse the data received by the serial port;  
@@ -68,7 +69,43 @@ The following two functions require users to populate themselves based on the pl
   {  
     return System_RunTime();  
   }  
-```  
+```
+
+Then in main() or proper funtion：
+
+```C
+  while (true)
+  {
+    struct GF_Data gForceData;
+    struct GF_Euler Euler;
+    GF_Ret ret = GFC_GetgForceData((&gForceData), Timeout);
+    if (GF_RET_OK == ret)
+    {
+      GF_Gesture gesture;
+      switch (gForceData.type)
+      {
+      case GF_Data::QUATERNION:
+        GFC_QuaternionToEuler(&(gForceData.value.quaternion), &Euler);
+        // Serial.print("pitch: "); Serial.print(Euler.pitch);
+        // Serial.print(", yaw: "); Serial.print(Euler.yaw);
+        // Serial.print(", roll: "); Serial.print(Euler.roll);
+        // Serial.println();
+        break;
+      case GF_Data::GESTURE:
+        gesture = gForceData.value.gesture;
+        printf("gesture: %d\n", gesture);
+        // Do something?
+        break;
+      default:
+        break;
+      }
+    }
+    else
+    {
+      printf("GFC_GetgForceData() returned: %d\n", ret);
+    }
+  }
+```
 
 **Note:**
     > To make sure gForce armband can recognize your gestures, please refer to
