@@ -220,6 +220,14 @@ GF_Ret GForceAdapterPrivate::GetGForceData(GF_Data *gForceData, unsigned long ti
 
       if (gForceData->type == GF_Data::GESTURE)
       {
+        static GF_Gesture prev_gesture = GF_Gesture::GF_RELEASE;
+
+        if (prev_gesture == (GF_Gesture)tempByte)
+        {
+          return GF_RET_TIME_OUT;
+        }
+
+        prev_gesture = (GF_Gesture)tempByte;
         gForceData->value.gesture = (GF_Gesture)tempByte;
         break;  /* ignore other bytes */
       }
