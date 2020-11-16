@@ -2,7 +2,7 @@
 
 ## Overview
 
-gForce SDK for Arduino is for using [gForce Embedded Suite][gForceEmbeddedSuite] in Arduino and Arduino-compatible devices. It offers an easy way for Arduino-alike devices to connect to [gForce Armband][gForceArmband] and read data such as gestures and quaternions from it.
+gForce SDK for Arduino is for using [gForce Armband][gForceArmband] with [gForce Joint][gForceJoint] in Arduino and Arduino-compatible devices. It offers an easy way for Arduino-alike devices to connect to [gForce Armband][gForceArmband] and read data such as gestures and quaternions from it.
 
 A gForce Embedded Suite includes a gForce Armband and a gForceJoint.
 The gForceJoint is a hardware module that bridges the gForce armband over BLE to the Arduino board over UART.
