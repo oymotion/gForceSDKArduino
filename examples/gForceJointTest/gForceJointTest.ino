@@ -60,7 +60,10 @@ void setup()
 {
   Serial.begin(115200);
   Serial.println("setup");
+
+  gforceSerial.begin(115200);
   gforce.Init();
+
   gTimestamp = millis();
 }
 
