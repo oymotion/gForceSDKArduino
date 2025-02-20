@@ -180,41 +180,41 @@ void loop()
 
     switch (gForceData.type)
     {
-      case GF_Data::QUATERNION:
+      case GF_Data_Type::GF_QUATERNION:
         break;
 
-      case GF_Data::GESTURE:
+      case GF_Data_Type::GF_GESTURE:
         gesture = gForceData.value.gesture;
 
-        if (gesture == GF_FIST)
+        if (gesture == GF_Gesture::GF_FIST)
         {
           perform_gesture(FistIdx);
         }
-        else if (gesture == GF_SPREAD)
+        else if (gesture == GF_Gesture::GF_SPREAD)
         {
           perform_gesture(ReleaseIdx);
         }
-        else if (gesture == GF_WAVEIN)
+        else if (gesture == GF_Gesture::GF_WAVEIN)
         {
           perform_gesture(WaveInIdx);
         }
-        else if (gesture == GF_WAVEOUT)
+        else if (gesture == GF_Gesture::GF_WAVEOUT)
         {
           perform_gesture(WaveOutIdx);
         }
-        else if (gesture == GF_PINCH)
+        else if (gesture == GF_Gesture::GF_PINCH)
         {
           perform_gesture(TapIdx);
         }
-        else if (gesture == GF_SHOOT)
+        else if (gesture == GF_Gesture::GF_SHOOT)
         {
           perform_gesture(ShootIdx);
         }
-        else if (gesture == GF_RELEASE)
+        else if (gesture == GF_Gesture::GF_RELEASE)
         {
           perform_gesture(RelaxIdx);
         }
-        else if (gesture == GF_UNKNOWN)
+        else if (gesture == GF_Gesture::GF_UNKNOWN)
         {
           perform_gesture(RelaxIdx);
         }

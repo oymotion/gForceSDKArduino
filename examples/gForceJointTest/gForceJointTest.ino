@@ -77,7 +77,7 @@ void loop()
 
     switch (gForceData.type)
     {
-    case GF_Data::QUATERNION:
+    case GF_Data_Type::GF_QUATERNION:
       if(millis() - gTimestamp > 5000)
       {
         gTimestamp = millis();
@@ -86,38 +86,38 @@ void loop()
 
       break;
 
-    case GF_Data::GESTURE:
+    case GF_Data_Type::GF_GESTURE:
       gesture = gForceData.value.gesture;
 
-      if (gesture == GF_FIST)
+      if (gesture == GF_Gesture::GF_FIST)
       {
         Serial.println("Fist");
       }
-      else if (gesture == GF_SPREAD)
+      else if (gesture == GF_Gesture::GF_SPREAD)
       {
         Serial.println("Spread");
       }
-      else if (gesture == GF_WAVEIN)
+      else if (gesture == GF_Gesture::GF_WAVEIN)
       {
         Serial.println("WaveIn");
       }
-      else if (gesture == GF_WAVEOUT)
+      else if (gesture == GF_Gesture::GF_WAVEOUT)
       {
         Serial.println("WaveOut");
       }
-      else if (gesture == GF_PINCH)
+      else if (gesture == GF_Gesture::GF_PINCH)
       {
         Serial.println("Pinch");
       }
-      else if (gesture == GF_SHOOT)
+      else if (gesture == GF_Gesture::GF_SHOOT)
       {
         Serial.println("Shoot");
       }
-      else if (gesture == GF_RELEASE)
+      else if (gesture == GF_Gesture::GF_RELEASE)
       {
         Serial.println("Release");
       }
-      else if (gesture == GF_UNKNOWN)
+      else if (gesture == GF_Gesture::GF_UNKNOWN)
       {
         Serial.println("Unknown");
       }

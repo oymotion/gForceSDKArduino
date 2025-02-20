@@ -9,105 +9,115 @@ A gForce Embedded Suite includes a gForce Armband and a gForceJoint. The gForceJ
 
 ## Usage
 
-1. Importing the gForce SDK for Embedded
-
-Download and unzip the library file into your project.
-In the main.c function you need to add `#include "gForceAdapterC.h"`.
-
-2. The API we provide in library
-
-We provide some API interfaces in the library to help you analyze the data of gForce armband.
-`gForceAdapter.h` and `gForceAdapter.cpp` are files of C++ version, while `gForceAdapterC.h` and `gForceAdapterC.cpp` for wrapped version in C.
+We provide some C API interfaces in the library to help you analyze the data of gForce armband.
 You must add those files into your project, and call the interfaces:
 
 ```C
-  //Parse the data received by the serial port;  
-  //*gForceData : Points to the structure that stores the parsed data;  
-  //timeout : Set data acceptance judgment time;
-
-  enum GF_Ret GFC_GetgForceData(struct GF_Data *gForceData, unsigned long timeout);
+///
+/// Brief Sets up the serial line connection. This function shall be called
+/// prior to GetForceData.
+///
+void GF_Init(FUNC_GET_SERIAL_DATA getCharFunc, FUNC_GET_MILLIS getTimerFunc);
 ```
 
 ```C
-  //Converts the received quaternions into euler angles;  
-  //*quat :  Points to a structure that stores quaternions;  
-  //*euler : Points to the structure that stores the euler Angle;  
+//Parse the data received by the serial port;  
+//*gForceData : Points to the structure that stores the parsed data;  
+//timeout : Set data acceptance judgment time;
 
-  enum GF_Ret GFC_QuaternionToEuler(const struct GF_Quaternion *quat, struct GF_Euler *euler);
+GF_Ret GF_GetGForceData(GF_Data *gForceData, unsigned long timeout);
 ```
 
 ```C
-  //Determine if the hand gesture is obtained;  
-  //gesture : The variable that stores the gesture;
-  //timeout : Set data acceptance judgment time;  
+//Converts the received quaternions into euler angles;  
+//*quat :  Points to a structure that stores quaternions;  
+//*euler : Points to the structure that stores the euler Angle;  
 
-  BOOL GFC_GetGesture(enum GF_Gesture gesture, unsigned long timeout);
+GF_Ret GF_QuaternionToEuler(const GF_Quaternion *quat, GF_Euler *euler);
+```
+
+```C
+//Determine if the hand gesture is obtained;  
+//gesture : The variable that stores the gesture;
+//timeout : Set data acceptance judgment time;  
+
+bool GF_GotGesture(GF_Gesture gesture, unsigned long timeout);
 ```
 
 The following two functions require users to populate themselves based on the platform they use:
 
 ```C
-  // Gets the data received by the serial port
-  // *data : Point to the received data
-  // return : Returns 1 if data got, otherwise 0 
-  int SYS_GetChar(unsigned char *data)  
-  {  
-    int ret = Your_USART_RxData;  
+// Gets the data received by the serial port
+// *data : Point to the received data
+// return : Returns 1 if data got, otherwise 0 
+int SYS_GetChar(unsigned char *data)  
+{  
+  int ret = Your_USART_RxData;
 
-    if(ret == -1)  
-      return 0;  
+  if(ret == -1)  
+    return 0;  
 
-    *data = (unsigned char)ret;  
+  *data = (unsigned char)ret;  
 
-    return 1;
-  }
+  return 1;
+}
 ```
 
 ```C
-  // returns System time
-  unsigned long SYS_GetTick(void)
-  {  
-    return System_RunTime();  
-  }  
+// returns System time in milliseconds
+unsigned long SYS_GetTick(void)
+{  
+  return System_RunTime();  
+}  
 ```
 
 Then in main() or proper funtion：
 
 ```C
-  while (true)
+// Init gForce
+GF_Init(SYS_GetChar, SYS_GetTick);
+
+while (true)
+{
+  GF_Data gForceData;
+  GF_Euler Euler;
+
+  // timeout is 100ms
+  unsigned long timeout = 100;
+
+  // Get gForce data
+  GF_Ret ret = GF_GetGForceData((&gForceData), timeout);
+
+  if (GF_RET_OK == ret)
   {
-    struct GF_Data gForceData;
-    struct GF_Euler Euler;
-    GF_Ret ret = GFC_GetgForceData((&gForceData), Timeout);
-    if (GF_RET_OK == ret)
+    GF_Gesture gesture;
+    switch (gForceData.type)
     {
-      GF_Gesture gesture;
-      switch (gForceData.type)
-      {
-      case GF_Data::QUATERNION:
-        GFC_QuaternionToEuler(&(gForceData.value.quaternion), &Euler);
-        // Serial.print("pitch: "); Serial.print(Euler.pitch);
-        // Serial.print(", yaw: "); Serial.print(Euler.yaw);
-        // Serial.print(", roll: "); Serial.print(Euler.roll);
-        // Serial.println();
-        break;
-      case GF_Data::GESTURE:
-        gesture = gForceData.value.gesture;
-        printf("gesture: %d\n", gesture);
-        // Do something?
-        break;
-      default:
-        break;
-      }
-    }
-    else
-    {
-      printf("GFC_GetgForceData() returned: %d\n", ret);
+    case GF_QUATERNION:
+      GF_QuaternionToEuler(&(gForceData.value.quaternion), &Euler);
+      // Do something?
+
+      break;
+    case GF_GESTURE:
+      gesture = gForceData.value.gesture;
+      // Do something?
+      // printf("gesture: %d\n", gesture);
+
+      break;
+    default:
+      break;
     }
   }
+  else
+  {
+    // Error occured
+    // printf("GF_GetGForceData() returned: %d\n", ret);
+  }
+}
 ```
 
 **Note:**
+    > Use equivalent functions of class gForceAdaptor for C++, or use C API in C++.
     > To make sure gForce armband can recognize your gestures, please refer to
     > [Guide to Performing Gestures][GuideToPerformingGestures]
     > and spend several minutes learning and training yourself. The recognition
