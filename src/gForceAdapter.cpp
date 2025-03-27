@@ -234,7 +234,14 @@ GF_Ret GForceAdapterPrivate::GetGForceData(GF_Data *gForceData, unsigned long ti
       }
       else
       {
-        *((unsigned char *)&gForceData->value + i - GFORCE_HEADER_LEN) = tempByte;
+        if (i - GFORCE_HEADER_LEN < sizeof(gForceData->value))
+        {
+          *((unsigned char *)&gForceData->value + i - GFORCE_HEADER_LEN) = tempByte;
+        }
+        else
+        {
+          return GF_RET_ERR_DATA;
+        }
       }
 
       dataPkgLen--;
